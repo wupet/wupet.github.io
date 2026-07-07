@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Treasure Hunt</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+
+  <meta name="theme-color" content="#2563eb" />
+</head>
+
+<body>
+  <main class="app">
+
+    <!-- Start Screen -->
+    <section id="startScreen" class="screen active">
+      <div class="card">
+        <h1>Treasure Hunt</h1>
+        <p class="subtitle">Enter your team number to begin.</p>
+
+        <label for="teamInput">Team Number</label>
+        <input
+          id="teamInput"
+          type="number"
+          inputmode="numeric"
+          placeholder="Example: 7"
+        />
+
+        <button id="startButton">Start Hunt</button>
+
+        <p class="small-note">
+          Your clues will appear one at a time.
+        </p>
+      </div>
+    </section>
+
+
+    <!-- Hunt Screen -->
+    <section id="huntScreen" class="screen">
+      <div class="top-bar">
+        <div>
+          <p class="label">Team</p>
+          <h2 id="teamDisplay">—</h2>
+        </div>
+
+        <div>
+          <p class="label">Clue</p>
+          <h2>
+            <span id="currentStep">1</span>/<span id="totalSteps">0</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="card clue-card">
+        <p class="station-label">Your Next Clue</p>
+
+        <h1 id="riddleText">
+          Riddle goes here.
+        </h1>
+
+        <div class="answer-area">
+          <label for="codeInput">Enter Code</label>
+
+          <input
+            id="codeInput"
+            type="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            placeholder="Enter station code"
+          />
+
+          <button id="submitCodeButton">Submit Code</button>
+
+          <p id="feedbackMessage" class="feedback"></p>
+        </div>
+      </div>
+
+      <button id="resetButton" class="secondary-button">
+        Reset Team
+      </button>
+    </section>
+
+
+    <!-- Finished Screen -->
+    <section id="finishedScreen" class="screen">
+      <div class="card finished-card">
+        <div class="success-icon">✓</div>
+
+        <h1>Hunt Complete!</h1>
+
+        <p class="subtitle">
+          Great job, team <span id="finishedTeamNumber">—</span>!
+        </p>
+
+        <button id="playAgainButton">Start Over</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>
