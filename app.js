@@ -1,14 +1,14 @@
 // ====== RIDDLE DATA ======
 // Edit these to your own riddles. Answers compared case-insensitively.
 const RIDDLES = [
-  { q: "I have keys but no locks, space but no room, you can enter but can't go outside. What am I?", a: ["keyboard"], hint: "You use it to type." },
-  { q: "The more you take, the more you leave behind. What are they?", a: ["footsteps", "steps"], hint: "Think about walking." },
-  { q: "I'm tall when I'm young, and short when I'm old. What am I?", a: ["candle", "a candle"], hint: "I give light and melt." },
-  { q: "What has to be broken before you can use it?", a: ["egg", "an egg"], hint: "Found in a kitchen." },
-  { q: "What has hands but cannot clap?", a: ["clock", "a clock"], hint: "It ticks." },
-  { q: "What gets wetter the more it dries?", a: ["towel", "a towel"], hint: "Used after a shower." },
-  { q: "I fly without wings and cry without eyes. What am I?", a: ["cloud", "a cloud"], hint: "Look up at the sky." },
-  { q: "What has a neck but no head?", a: ["bottle", "a bottle"], hint: "Holds a drink." }
+  { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some Agua", a: ["4_D4_GR4M"], hint: "think about the northern most point of the camp" },
+  { q: "paxkx max uteexkl fxxm. Shift 7", a: ["1ST_TRY"], hint: "replace each letter with the one 7 places after ex. a->h, b->i, c->j, ..." },
+  { q: "A body of water, where jumping is seen, not the lake or the park, but somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
+  { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
+  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with.", a: ["C4T3P1LL4R"], hint: "Location marked by the capitalized letters" },
+  { q: "Where you might find a boat, to explore carolina, Where You hear people scream, at the end of a line (uh).", a: ["L4BYR1NTH"], hint: "maybe the end of a zipline (uh)" },
+  { q: "I gave a second chance to QP, But now im left here where the cars be", a: ["50/50"], hint: "Oh the parking lot right next to point Q (cliff jump), cupid is so dumb" },
+  { q: "backpack, bigback, southern most ____", a: ["4N1M4T0R"], hint: "Look next to the Zipline tower" }
 ];
 
 const NUM_RIDDLES = RIDDLES.length; // 8
