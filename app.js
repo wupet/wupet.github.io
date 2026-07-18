@@ -5,7 +5,7 @@ const RIDDLES = [
   { q: "paxkx max uteexkl fxxm. Shift 7", a: ["1ST_TRY"], hint: "replace each letter with the one 7 places after ex. a->h, b->i, c->j, ..." },
   { q: "A body of water, where jumping is seen, not the lake or the park, but somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
   { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
-  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with.", a: ["C4T3P1LL4R"], hint: "Location marked by the capitalized letters" },
+  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with.", a: ["C4T3RP1LL4R"], hint: "Location marked by the capitalized letters" },
   { q: "Where you might find a boat, to explore carolina, Where You hear people scream, at the end of a line (uh).", a: ["L4BYR1NTH"], hint: "maybe the end of a zipline (uh)" },
   { q: "I gave a second chance to QP, But now im left here where the cars be", a: ["50/50"], hint: "Oh the parking lot right next to point Q (cliff jump), cupid is so dumb" },
   { q: "backpack, bigback, southern most ____", a: ["4N1M4T0R"], hint: "Look next to the Zipline tower" }
