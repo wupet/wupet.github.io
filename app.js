@@ -1,335 +1,338 @@
-/************************************************************
- * TREASURE HUNT APP
- *
- * Edit the STATIONS array below.
- *
- * Each station needs:
- * - id: unique identifier
- * - riddle: what the team sees
- * - code: the answer/code they must enter to unlock next clue
- ************************************************************/
-
-const STATIONS = [
-  {
-    id: "tree",
-    riddle: "I stand tall with arms but never wave. Find me where shade is saved.",
-    code: "TREE42"
-  },
-  {
-    id: "bench",
-    riddle: "I am not tired, but people rest on me. Look where sitters like to be.",
-    code: "BENCH18"
-  },
-  {
-    id: "flag",
-    riddle: "I dance in the wind but have no feet. Find the colors flying high.",
-    code: "FLAG7"
-  },
-  {
-    id: "door",
-    riddle: "I open and close but never walk away. Find the entrance to continue your day.",
-    code: "DOOR99"
-  },
-  {
-    id: "garden",
-    riddle: "I am full of colors, roots, and bees. Find the place with flowers and leaves.",
-    code: "BLOOM5"
-  },
-  {
-    id: "field",
-    riddle: "Wide and open, green and bright. Find the place for games and flight.",
-    code: "FIELD3"
-  }
+// ====== RIDDLE DATA ======
+// Edit these to your own riddles. Answers compared case-insensitively.
+const RIDDLES = [
+  { q: "I have keys but no locks, space but no room, you can enter but can't go outside. What am I?", a: ["keyboard"], hint: "You use it to type." },
+  { q: "The more you take, the more you leave behind. What are they?", a: ["footsteps", "steps"], hint: "Think about walking." },
+  { q: "I'm tall when I'm young, and short when I'm old. What am I?", a: ["candle", "a candle"], hint: "I give light and melt." },
+  { q: "What has to be broken before you can use it?", a: ["egg", "an egg"], hint: "Found in a kitchen." },
+  { q: "What has hands but cannot clap?", a: ["clock", "a clock"], hint: "It ticks." },
+  { q: "What gets wetter the more it dries?", a: ["towel", "a towel"], hint: "Used after a shower." },
+  { q: "I fly without wings and cry without eyes. What am I?", a: ["cloud", "a cloud"], hint: "Look up at the sky." },
+  { q: "What has a neck but no head?", a: ["bottle", "a bottle"], hint: "Holds a drink." }
 ];
 
+const NUM_RIDDLES = RIDDLES.length; // 8
+const MAX_TEAMS = 32;
 
-/************************************************************
- * App State
- ************************************************************/
+// Each array lists riddle NUMBERS (1-8) in the order that team should solve them.
+const TEAM_ORDERS = {
+    1:[1,6,4,5,7,3,2,0],
+    2:[1,5,3,2,4,7,6,0],
+    3:[2,7,5,6,0,4,3,1],
+    4:[2,6,4,3,5,0,7,1],
+    5:[3,0,6,7,1,5,4,2],
+    6:[3,7,5,4,6,1,0,2],
+    7:[4,1,7,0,2,6,5,3],
+    8:[4,0,6,5,7,2,1,3],
+    9:[5,2,0,1,3,7,6,4],
+    10:[5,1,7,6,0,3,2,4],
+    11:[6,3,1,2,4,0,7,5],
+    12:[6,2,0,7,1,4,3,5],
+    13:[7,4,2,3,5,1,0,6],
+    14:[7,3,1,0,2,5,4,6],
+    15:[0,5,3,4,6,2,1,7],
+    16:[0,4,2,1,3,6,5,7],
+    17:[7,3,2,0,1,6,4,5],
+    18:[4,7,6,0,1,5,3,2],
+    19:[0,4,3,1,2,7,5,6],
+    20:[5,0,7,1,2,6,4,3],
+    21:[1,5,4,2,3,0,6,7],
+    22:[6,1,0,2,3,7,5,4],
+    23:[2,6,5,3,4,1,7,0],
+    24:[7,2,1,3,4,0,6,5],
+    25:[3,7,6,4,5,2,0,1],
+    26:[0,3,2,4,5,1,7,6],
+    27:[4,0,7,5,6,3,1,2],
+    28:[1,4,3,5,6,2,0,7],
+    29:[5,1,0,6,7,4,2,3],
+    30:[2,5,4,6,7,3,1,0],
+    31:[6,2,1,7,0,5,3,4],
+    32:[3,6,5,7,0,4,2,1]
+};
 
-let teamNumber = null;
-let stationOrder = [];
-let currentIndex = 0;
+// ====== ORDERING ALGORITHM ======
+// Latin-square style rotation guarantees even distribution:
+// At every step index s, the set of {teams' current riddles} is spread across
+// all 8 riddles evenly (each riddle held by MAX_TEAMS/NUM_RIDDLES = 4 teams).
+// Team t (0-indexed) at step s gets riddle (start + s*stride) % NUM_RIDDLES.
 
+// Dev-only sanity check. Call validateTeamOrders() from the console.
+// function validateTeamOrders() {
+//   const problems = [];
+//   for (let team = 1; team <= MAX_TEAMS; team++) {
+//     const seq = TEAM_ORDERS[team];
+//     if (!seq) { problems.push(`Team ${team}: MISSING sequence`); continue; }
+//     if (seq.length !== NUM_RIDDLES) {
+//       problems.push(`Team ${team}: has ${seq.length} riddles, expected ${NUM_RIDDLES}`);
+//     }
+//     // Adjust the expected set depending on Option A (1-8) or Option B (0-7):
+//     const expected = new Set();
+//     for (let i = 0; i < NUM_RIDDLES; i++) expected.add(i); // Option A (1-based)
+//     // for Option B use: for (let i = 0; i < NUM_RIDDLES; i++) expected.add(i);
+//     const seen = new Set(seq);
+//     if (seen.size !== seq.length) {
+//       problems.push(`Team ${team}: contains DUPLICATE riddles`);
+//     }
+//     for (const val of seq) {
+//       if (!expected.has(val)) {
+//         problems.push(`Team ${team}: invalid riddle value ${val}`);
+//       }
+//     }
+//   }
 
-/************************************************************
- * Elements
- ************************************************************/
+//   if (problems.length === 0) {
+//     console.log('%c✓ All 32 team sequences are valid.', 'color: #34d399; font-weight: bold;');
+//   } else {
+//     console.warn('Team order problems found:\n' + problems.join('\n'));
+//   }
+//   return problems;
+// }
 
-const startScreen = document.getElementById("startScreen");
-const huntScreen = document.getElementById("huntScreen");
-const finishedScreen = document.getElementById("finishedScreen");
+// // Reports how many teams are on each riddle at each step.
+// function checkDistribution() {
+//   for (let step = 0; step < NUM_RIDDLES; step++) {
+//     const counts = {};
+//     for (let team = 1; team <= MAX_TEAMS; team++) {
+//       const seq = TEAM_ORDERS[team];
+//       const riddle = seq[step];
+//       counts[riddle] = (counts[riddle] || 0) + 1;
+//     }
+//     console.log(`Step ${step + 1}:`, counts);
+//   }
+// }
 
-const teamInput = document.getElementById("teamInput");
-const startButton = document.getElementById("startButton");
-
-const teamDisplay = document.getElementById("teamDisplay");
-const currentStep = document.getElementById("currentStep");
-const totalSteps = document.getElementById("totalSteps");
-const riddleText = document.getElementById("riddleText");
-const codeInput = document.getElementById("codeInput");
-const submitCodeButton = document.getElementById("submitCodeButton");
-const feedbackMessage = document.getElementById("feedbackMessage");
-
-const resetButton = document.getElementById("resetButton");
-const playAgainButton = document.getElementById("playAgainButton");
-const finishedTeamNumber = document.getElementById("finishedTeamNumber");
-
-
-/************************************************************
- * Screen Helpers
- ************************************************************/
-
-function showScreen(screen) {
-  startScreen.classList.remove("active");
-  huntScreen.classList.remove("active");
-  finishedScreen.classList.remove("active");
-
-  screen.classList.add("active");
-}
-
-
-/************************************************************
- * Start Game
- ************************************************************/
-
-function startGame() {
-  const value = teamInput.value.trim();
-
-  if (!value) {
-    alert("Please enter a team number.");
-    return;
+function getOrdering(teamNumber) {
+  const seq = TEAM_ORDERS[teamNumber];
+  if (!seq) {
+    throw new Error(`No sequence defined for team ${teamNumber}`);
   }
-
-  teamNumber = Number(value);
-
-  if (!Number.isInteger(teamNumber) || teamNumber <= 0) {
-    alert("Please enter a valid team number.");
-    return;
-  }
-
-  stationOrder = generateStationOrder(teamNumber, STATIONS);
-  currentIndex = 0;
-
-  saveProgress();
-  renderCurrentClue();
-
-  showScreen(huntScreen);
+  return seq.slice(); // already 0-based, return a copy
 }
 
+// ====== STATE ======
+let state = {
+  team: null,
+  order: [],
+  currentStep: 0,
+  hintsUsed: [],   // boolean per original riddle id
+  timestamps: []   // completion timestamp per step
+};
 
-/************************************************************
- * Render Current Clue
- ************************************************************/
-
-function renderCurrentClue() {
-  const currentStation = stationOrder[currentIndex];
-
-  if (!currentStation) {
-    finishGame();
-    return;
-  }
-
-  teamDisplay.textContent = teamNumber;
-  currentStep.textContent = currentIndex + 1;
-  totalSteps.textContent = stationOrder.length;
-  riddleText.textContent = currentStation.riddle;
-
-  codeInput.value = "";
-  feedbackMessage.textContent = "";
-  feedbackMessage.className = "feedback";
-
-  setTimeout(() => {
-    codeInput.focus();
-  }, 100);
+// ====== SCREEN HELPERS ======
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-
-/************************************************************
- * Submit Code
- ************************************************************/
-
-function submitCode() {
-  const currentStation = stationOrder[currentIndex];
-
-  if (!currentStation) return;
-
-  const enteredCode = normalizeCode(codeInput.value);
-  const correctCode = normalizeCode(currentStation.code);
-
-  if (enteredCode === correctCode) {
-    feedbackMessage.textContent = "Correct! Loading next clue...";
-    feedbackMessage.className = "feedback good";
-
-    currentIndex++;
-    saveProgress();
-
-    setTimeout(() => {
-      if (currentIndex >= stationOrder.length) {
-        finishGame();
-      } else {
-        renderCurrentClue();
-      }
-    }, 700);
-  } else {
-    feedbackMessage.textContent = "Not quite. Try again.";
-    feedbackMessage.className = "feedback bad";
-    codeInput.select();
-  }
-}
-
-
-/************************************************************
- * Finish Game
- ************************************************************/
-
-function finishGame() {
-  finishedTeamNumber.textContent = teamNumber;
-  showScreen(finishedScreen);
-}
-
-
-/************************************************************
- * Reset
- ************************************************************/
-
-function resetGame() {
-  const confirmed = confirm("Reset this team's progress?");
-
-  if (!confirmed) return;
-
-  localStorage.removeItem("treasureHuntState");
-
-  teamNumber = null;
-  stationOrder = [];
-  currentIndex = 0;
-
-  teamInput.value = "";
-  showScreen(startScreen);
-}
-
-
-/************************************************************
- * Save / Load
- ************************************************************/
-
-function saveProgress() {
-  const state = {
-    teamNumber,
-    currentIndex
-  };
-
-  localStorage.setItem("treasureHuntState", JSON.stringify(state));
-}
-
-function loadProgress() {
-  const saved = localStorage.getItem("treasureHuntState");
-
-  if (!saved) {
-    showScreen(startScreen);
-    return;
-  }
-
+// Returns seconds since local midnight (0–86399). Compact and sortable.
+function getLocalTimestamp() {
   try {
-    const state = JSON.parse(saved);
+    const d = new Date();
+    return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+  } catch (e) {
+    return -1; // -1 signals "unavailable"
+  }
+}
 
-    teamNumber = state.teamNumber;
-    currentIndex = state.currentIndex || 0;
-    stationOrder = generateStationOrder(teamNumber, STATIONS);
+// ====== GAME FLOW ======
+function startGame() {
+  const val = parseInt(document.getElementById('teamInput').value, 10);
+  const err = document.getElementById('teamError');
+  if (isNaN(val) || val < 1 || val > MAX_TEAMS) {
+    err.textContent = `Please enter a valid team number (1–${MAX_TEAMS}).`;
+    return;
+  }
+  err.textContent = '';
+  state.team = val;
+  state.order = getOrdering(val);
+  state.currentStep = 0;
+  state.hintsUsed = new Array(NUM_RIDDLES).fill(false);
+  state.timestamps = new Array(NUM_RIDDLES).fill(null);
+  saveState();
+  showScreen('screen-riddle');
+  renderRiddle();
+}
 
-    if (currentIndex >= stationOrder.length) {
+function renderRiddle() {
+  const riddleId = state.order[state.currentStep];
+  const riddle = RIDDLES[riddleId];
+
+  document.getElementById('progressTeam').textContent = `Team ${state.team}`;
+  document.getElementById('progressStep').textContent =
+    `Riddle ${state.currentStep + 1} of ${NUM_RIDDLES}`;
+  document.getElementById('progressFill').style.width =
+    `${(state.currentStep / NUM_RIDDLES) * 100}%`;
+  document.getElementById('riddleTitle').textContent = `Riddle ${state.currentStep + 1}`;
+  document.getElementById('riddleText').textContent = riddle.q;
+
+  const hintBox = document.getElementById('hintBox');
+  const hintBtn = document.getElementById('hintBtn');
+  if (state.hintsUsed[riddleId]) {
+    hintBox.style.display = 'block';
+    document.getElementById('hintText').textContent = riddle.hint;
+    hintBtn.style.display = 'none';
+  } else {
+    hintBox.style.display = 'none';
+    hintBtn.style.display = 'block';
+  }
+
+  document.getElementById('guessInput').value = '';
+  document.getElementById('guessError').textContent = '';
+  document.getElementById('guessInput').focus();
+}
+
+function revealHint() {
+  const riddleId = state.order[state.currentStep];
+  state.hintsUsed[riddleId] = true;
+  saveState();
+  renderRiddle();
+}
+
+function normalize(str) {
+  return str.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function submitGuess() {
+  const riddleId = state.order[state.currentStep];
+  const riddle = RIDDLES[riddleId];
+  const guess = normalize(document.getElementById('guessInput').value);
+  const err = document.getElementById('guessError');
+
+  if (!guess) {
+    err.textContent = 'Please enter an answer.';
+    return;
+  }
+
+  const correct = riddle.a.some(ans => normalize(ans) === guess);
+  if (correct) {
+    state.timestamps[state.currentStep] = getLocalTimestamp();
+    state.currentStep++;
+    saveState();
+    if (state.currentStep >= NUM_RIDDLES) {
       finishGame();
     } else {
-      renderCurrentClue();
-      showScreen(huntScreen);
+      renderRiddle();
     }
-  } catch {
-    showScreen(startScreen);
+  } else {
+    err.textContent = 'Not quite — try again!';
+    document.getElementById('guessInput').select();
   }
 }
 
+// ====== WIN / QR CODE ======
+function finishGame() {
+  showScreen('screen-win');
+  document.getElementById('winTeam').textContent =
+    `Team ${state.team}, you've solved all ${NUM_RIDDLES} riddles.`;
 
-/************************************************************
- * Code Normalizing
- *
- * This makes codes easier to enter.
- * For example:
- * "Tree 42", "tree42", and "TREE42" all match.
- ************************************************************/
+  // Compact positional encoding — NO labels.
+  // Format:  team|r,h,t;r,h,t;...  (one segment per completed step, in solve order)
+  //   r = riddle number (1-based)
+  //   h = hint used (1) or not (0)
+  //   t = seconds since midnight at completion (-1 if unavailable)
+  const segments = state.order.map((riddleId, step) => {
+    const r = riddleId + 1;
+    const h = state.hintsUsed[riddleId] ? 1 : 0;
+    const t = state.timestamps[step];
+    return `${r},${h},${t}`;
+  });
 
-function normalizeCode(code) {
-  return String(code)
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g, "");
+  const encoded = `${state.team}|${segments.join(';')}`;
+  // Example: "7|3,0,52327;7,1,52410;1,0,52498;..."
+
+  // Render QR
+  const qrContainer = document.getElementById('qrcode');
+  qrContainer.innerHTML = '';
+  new QRCode(qrContainer, {
+    text: encoded,
+    width: 240,
+    height: 240,
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  // Human-readable summary
+  const hintsCount = state.hintsUsed.filter(Boolean).length;
+  document.getElementById('summary').innerHTML =
+    `<span class="badge">Team <strong>${state.team}</strong></span>` +
+    `<span class="badge">Hints Used <strong>${hintsCount}</strong></span>`;
+
+  clearState();
 }
 
+// ====== PERSISTENCE (survive accidental refresh, still offline) ======
+function saveState() {
+  try {
+    localStorage.setItem('treasureHuntState', JSON.stringify(state));
+  } catch (e) {}
+}
 
-/************************************************************
- * Generate Unique Station Order
- *
- * This uses the team number as a seed.
- * The same team number always gets the same order.
- * Different team numbers usually get different orders.
- ************************************************************/
+function clearState() {
+  try {
+    localStorage.removeItem('treasureHuntState');
+  } catch (e) {}
+}
 
-function generateStationOrder(seed, stations) {
-  const shuffled = [...stations];
+function loadState() {
+  try {
+    const saved = localStorage.getItem('treasureHuntState');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.team && parsed.currentStep < NUM_RIDDLES) {
+        state = parsed;
+        showScreen('screen-riddle');
+        renderRiddle();
+      }
+    }
+  } catch (e) {}
+}
 
-  const random = seededRandom(seed);
+// Allow pressing Enter to submit
+document.addEventListener('keydown', (e) => {
+  const modalOpen = document.getElementById('resetModal').classList.contains('active');
+  if (modalOpen) return; // don't submit while confirming reset
 
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  if (e.key === 'Enter') {
+    if (document.getElementById('screen-team').classList.contains('active')) {
+      startGame();
+    } else if (document.getElementById('screen-riddle').classList.contains('active')) {
+      submitGuess();
+    }
   }
+});
 
-  return shuffled;
+// ====== RESET ======
+function openResetModal() {
+  document.getElementById('resetModal').classList.add('active');
 }
 
+function closeResetModal() {
+  document.getElementById('resetModal').classList.remove('active');
+}
 
-/************************************************************
- * Seeded Random Number Generator
- *
- * This makes randomness predictable based on team number.
- ************************************************************/
-
-function seededRandom(seed) {
-  let value = seed * 9301 + 49297;
-
-  return function () {
-    value = (value * 9301 + 49297) % 233280;
-    return value / 233280;
+function confirmReset() {
+  clearState();               // remove saved progress from localStorage
+  state = {                   // reset in-memory state
+    team: null,
+    order: [],
+    currentStep: 0,
+    hintsUsed: [],
+    timestamps: []
   };
+  closeResetModal();
+  document.getElementById('teamInput').value = '';
+  document.getElementById('teamError').textContent = '';
+  showScreen('screen-team');
 }
 
-
-/************************************************************
- * Events
- ************************************************************/
-
-startButton.addEventListener("click", startGame);
-
-teamInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    startGame();
-  }
+// Close modal on backdrop click
+document.getElementById('resetModal').addEventListener('click', (e) => {
+  if (e.target.id === 'resetModal') closeResetModal();
 });
 
-submitCodeButton.addEventListener("click", submitCode);
-
-codeInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    submitCode();
-  }
+// Close modal on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeResetModal();
 });
 
-resetButton.addEventListener("click", resetGame);
-playAgainButton.addEventListener("click", resetGame);
-
-
-/************************************************************
- * Init
- ************************************************************/
-
-loadProgress();
+// Resume in-progress game on load
+window.addEventListener('load', loadState);

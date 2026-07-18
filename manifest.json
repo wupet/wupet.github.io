@@ -1,20 +1,24 @@
 {
   "name": "Treasure Hunt",
-  "short_name": "Hunt",
+  "short_name": "Treasure Hunt",
+  "description": "An offline riddle-based treasure hunt game.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f3f6fb",
-  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icon.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
