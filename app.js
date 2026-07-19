@@ -2,7 +2,7 @@
 // Edit these to your own riddles. Answers compared case-insensitively.
 const RIDDLES = [
   { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some agua", a: ["4_D4_GR4M"], hint: "Think about the northern most point of the camp." },
-  { q: "paxkx max uteexkl fxxm. Shift 7", a: ["1ST_TRY"], hint: "replace each letter with the one 7 places after ex. a->h, b->i, c->j, ..." },
+  { q: "sdana pda xwhhano iaap. Shift 4", a: ["1ST_TRY"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
   { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
   { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
   { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["C4T3RP1LL4R"], hint: "Location marked by the capitalized letters." },
