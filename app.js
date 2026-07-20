@@ -5,9 +5,9 @@ const RIDDLES = [
   { q: "sdana pda xwhhano iaap. Shift 4", a: ["1ST_TRY"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
   { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
   { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
-  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["C4T3RP1LL4R"], hint: "Location marked by the capitalized letters." },
-  { q: "Where you might find a boat, To explore carolina, Where You hear people scream, At the end of a line (uh).", a: ["L4BYR1NTH"], hint: "Baybe the end of a zipline (uh)." },
-  { q: "I gave a second chance to QP, But now im left here where the cars be.", a: ["50/50"], hint: "Oh the parking lot right next to point Q (cliff jump), Cupid is so dumb." },
+  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["H0US3_0F_CUPS"], hint: "Location marked by the capitalized letters." },
+  { q: "Where you might find a boat, To explore carolina, Where You hear people scream, At the end of a line (uh).", a: ["C4T3RP1LL4R"], hint: "Baybe the end of a zipline (uh)." },
+  { q: "I gave a second chance to QP, But now im left here where the cars be.", a: ["L4BYR1NTH"], hint: "Oh the parking lot right next to point Q (cliff jump), Cupid is so dumb." },
   { q: "Backpack, Bigback, Southern most ____", a: ["4N1M4T0R"], hint: "Look next to the zipline tower." }
 ];
 
