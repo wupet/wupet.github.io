@@ -341,3 +341,9 @@ document.addEventListener('keydown', (e) => {
 
 // Resume in-progress game on load
 window.addEventListener('load', loadState);
+window.openResetModal = openResetModal;
+window.closeResetModal = closeResetModal;
+window.confirmReset = confirmReset;
+window.startGame = startGame;
+window.submitGuess = submitGuess;
+window.revealHint = revealHint;
