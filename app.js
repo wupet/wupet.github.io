@@ -3,14 +3,14 @@ import { sha256 } from './crypto-utils.js';
 // ====== RIDDLE DATA ======
 // Edit these to your own riddles. Answers compared case-insensitively.
 const RIDDLES = [
-  { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some agua", a: ["6d88d98c0818dde82fe15e17fc18c2da5ca7b3d6902be632f6c355174c1c64da"], hint: "Think about the northern most point of the camp." },
-  { q: "sdana pda xwhhano iaap. Shift 4", a: ["512fb18a64dc8726cd5dc15870902abc42326138d3a950765b35479cf99c9345"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
-  { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["fad90ea6b661a09e5d860dca513fcee946ff60576bbe428e617897f5ddd77209"], hint: "Where you might go blobbing" },
-  { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["584c197233cbb18fde68bd30baf165cdc01a3cdb7b89f0de4583cd126d5a4eb8"], hint: "a->1, b->2, c->3, ..." },
-  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["792c3b9347a01033bd61ee9b2c9d273e1bf6b3e48dd57f6a9aa0501448eb94b3"], hint: "Location marked by the capitalized letters." },
-  { q: "at the end of the line, right next to the Overlook.", a: ["106914eed69eef25cf52f4e06182564164dd400fb3b92d7ecb8af35c64ce1419"], hint: "Think about the end of a zipline" },
-  { q: "Some call it a cage, others call it a field, smaller than the rec field, but not far from it", a: ["0e47e5db298547e377270ff8a2248a40a0378d44381de6062f70517783f2cfed"], hint: "The only place with turf in the name" },
-  { q: "where the worship team plays, where the speaker speaks, at the start of the game, at the end of the game.", a: ["1da9a5d69b310a2f775e36c03e5dbeeb3450905bd3ee19b2c60550c6965981fc"], hint: "Go to where you claim a popsicle" }
+  { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some agua", a: ["4951e2adb7b49c9c337e788a8cc1c146eb7fac23f37a139c4a6b9cbe5efe61d5"], hint: "Think about the northern most point of the camp." },
+  { q: "sdana pda xwhhano iaap. Shift 4", a: ["d415e2e7691b3cdbd3648b6934c856d43e33e084e75269b78b83443857c3b2fc"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
+  { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["16f9cb72c51cda25cd6a48a3992cf1baee82ba29cfc3348e6013571427355508"], hint: "Where you might go blobbing" },
+  { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["6414aebcb8132a7f8c05df3cb10cae1e1a47d290eb9335553184e7bf1efede9f"], hint: "a->1, b->2, c->3, ..." },
+  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["2c38bbc59c48bf47cbbd50201df9512a92e3605930855f373adbeb9b475a30c1"], hint: "Location marked by the capitalized letters." },
+  { q: "at the end of the line, right next to the Overlook.", a: ["eee75cb3d51d5ebc80bed06f1fff45fc0a6a995639cb47416195770618921e05"], hint: "Think about the end of a zipline" },
+  { q: "Some call it a cage, others call it a field, smaller than the rec field, but not far from it", a: ["9e1ddb842c2d832769fac9d8023213a1f04298ad2fcd8ab72a0ea745e36c4245"], hint: "The only place with turf in the name" },
+  { q: "where the worship team plays, where the speaker speaks, at the start of the game, at the end of the game.", a: ["3c8b3b039c122482188333096ab7adb5b3089713bc71b9957e8f47414b159e53"], hint: "Go to where you claim a popsicle" }
 ];
 
 const NUM_RIDDLES = RIDDLES.length; // 8
