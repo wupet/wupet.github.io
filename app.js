@@ -1,14 +1,14 @@
 // ====== RIDDLE DATA ======
 // Edit these to your own riddles. Answers compared case-insensitively.
 const RIDDLES = [
-  { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some agua", a: ["4_D4_GR4M"], hint: "Think about the northern most point of the camp." },
-  { q: "sdana pda xwhhano iaap. Shift 4", a: ["1ST_TRY"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
-  { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
-  { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
-  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["H0US3_0F_CUPS"], hint: "Location marked by the capitalized letters." },
-  { q: "at the end of the line, right next to the Overlook.", a: ["C4T3RP1LL4R"], hint: "Think about the end of a zipline" },
-  { q: "Some call it a cage, others call it a field, smaller than the rec field, but not far from it", a: ["L4BYR1NTH"], hint: "The only place with turf in the name" },
-  { q: "where the worship team plays, where the speaker speaks, at the start of the game, at the end of the game.", a: ["4N1M4T0R"], hint: "Go to where you claim a popsicle" }
+  { q: "At the point on the map, Where some would call alpha, Where the pictures are best, Right next to some agua", a: ["6d88d98c0818dde82fe15e17fc18c2da5ca7b3d6902be632f6c355174c1c64da"], hint: "Think about the northern most point of the camp." },
+  { q: "sdana pda xwhhano iaap. Shift 4", a: ["512fb18a64dc8726cd5dc15870902abc42326138d3a950765b35479cf99c9345"], hint: "replace every letter with the one 4 places after. example: a->e, b->f, c->g, ..." },
+  { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["fad90ea6b661a09e5d860dca513fcee946ff60576bbe428e617897f5ddd77209"], hint: "Where you might go blobbing" },
+  { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["584c197233cbb18fde68bd30baf165cdc01a3cdb7b89f0de4583cd126d5a4eb8"], hint: "a->1, b->2, c->3, ..." },
+  { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["792c3b9347a01033bd61ee9b2c9d273e1bf6b3e48dd57f6a9aa0501448eb94b3"], hint: "Location marked by the capitalized letters." },
+  { q: "at the end of the line, right next to the Overlook.", a: ["106914eed69eef25cf52f4e06182564164dd400fb3b92d7ecb8af35c64ce1419"], hint: "Think about the end of a zipline" },
+  { q: "Some call it a cage, others call it a field, smaller than the rec field, but not far from it", a: ["0e47e5db298547e377270ff8a2248a40a0378d44381de6062f70517783f2cfed"], hint: "The only place with turf in the name" },
+  { q: "where the worship team plays, where the speaker speaks, at the start of the game, at the end of the game.", a: ["1da9a5d69b310a2f775e36c03e5dbeeb3450905bd3ee19b2c60550c6965981fc"], hint: "Go to where you claim a popsicle" }
 ];
 
 const NUM_RIDDLES = RIDDLES.length; // 8
@@ -197,14 +197,14 @@ import { sha256 } from './crypto-utils.js';
 async function submitGuess() {
   const riddleId = state.order[state.currentStep];
   const riddle = RIDDLES[riddleId];
-
+  const err = document.getElementById('guessError');
   if (!document.getElementById('guessInput').value) {
     err.textContent = 'Please enter an answer.';
     return;
   }
 
-  const guess = sha256(riddle.q.concat(document.getElementById('guessInput').value));
-  const err = document.getElementById('guessError');
+  const guess =  await sha256(riddle.q.concat(document.getElementById('guessInput').value));
+  
 
   
 
