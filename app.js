@@ -1,3 +1,5 @@
+import { sha256 } from './crypto-utils.js';
+
 // ====== RIDDLE DATA ======
 // Edit these to your own riddles. Answers compared case-insensitively.
 const RIDDLES = [
@@ -192,7 +194,7 @@ function revealHint() {
 //   return str.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 // }
 
-import { sha256 } from './crypto-utils.js';
+
 
 async function submitGuess() {
   const riddleId = state.order[state.currentStep];
