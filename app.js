@@ -6,9 +6,9 @@ const RIDDLES = [
   { q: "A body of water, Where jumping is seen, Not the lake or the park, But somewhere in between.", a: ["G00_L4G00N"], hint: "Where you might go blobbing" },
   { q: "4, 9, 14, 9, 14, 7, 8, 1, 12, 12", a: ["YUMMY"], hint: "a->1, b->2, c->3, ..." },
   { q: "where you won't find the sea, where you definitely Can see, a fall some forsee, a plaCed marked with ____.", a: ["H0US3_0F_CUPS"], hint: "Location marked by the capitalized letters." },
-  { q: "Where you might find a boat, To explore carolina, Where You hear people scream, At the end of a line (uh).", a: ["C4T3RP1LL4R"], hint: "Baybe the end of a zipline (uh)." },
-  { q: "I gave a second chance to QP, But now im left here where the cars be.", a: ["L4BYR1NTH"], hint: "Oh the parking lot right next to point Q (cliff jump), Cupid is so dumb." },
-  { q: "Backpack, Bigback, Southern most ____", a: ["4N1M4T0R"], hint: "Look next to the zipline tower." }
+  { q: "at the end of the line, right next to the Overlook.", a: ["C4T3RP1LL4R"], hint: "Think about the end of a zipline" },
+  { q: "Some call it a cage, others call it a field, smaller than the rec field, but not far from it", a: ["L4BYR1NTH"], hint: "The only place with turf in the name" },
+  { q: "where the worship team plays, where the speaker speaks, at the start of the game, at the end of the game.", a: ["4N1M4T0R"], hint: "Go to where you claim a popsicle" }
 ];
 
 const NUM_RIDDLES = RIDDLES.length; // 8
@@ -188,22 +188,27 @@ function revealHint() {
   renderRiddle();
 }
 
-function normalize(str) {
-  return str.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-}
+// function normalize(str) {
+//   return str.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+// }
 
-function submitGuess() {
+import { sha256 } from './crypto-utils.js';
+
+async function submitGuess() {
   const riddleId = state.order[state.currentStep];
   const riddle = RIDDLES[riddleId];
-  const guess = normalize(document.getElementById('guessInput').value);
-  const err = document.getElementById('guessError');
 
-  if (!guess) {
+  if (!document.getElementById('guessInput').value) {
     err.textContent = 'Please enter an answer.';
     return;
   }
 
-  const correct = riddle.a.some(ans => normalize(ans) === guess);
+  const guess = sha256(riddle.q.concat(document.getElementById('guessInput').value));
+  const err = document.getElementById('guessError');
+
+  
+
+  const correct = riddle.a.some(ans => ans === guess);
   if (correct) {
     state.timestamps[state.currentStep] = getLocalTimestamp();
     state.currentStep++;
