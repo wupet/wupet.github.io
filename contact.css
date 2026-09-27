@@ -1,0 +1,165 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.fixed-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between; /* left vs right */
+    align-items: center;
+    padding: 0 120px;
+    color: #1C1C1C;
+    font-size: 17px;
+    font-family: 'inter';
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+.left-items {
+    display: flex;          /* keeps link + button in one row */
+    align-items: center;
+    gap: 15px;              /* space between link and button */
+}
+
+.right-items {
+    display: flex;          /* right side links, if multiple */
+    align-items: center;
+}
+
+.bb {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    color: #1C1C1C;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;          /* centers the SVG inside button */
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.moon-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    /* display: block;       removes inline whitespace */
+    margin: 0;            /* ensure no extra margin */
+}
+
+
+
+.bb:hover {
+    background: #f0f0f0;
+}
+
+p {
+    padding-left: 105px; /* keeps text away from left edge */
+    padding-right: 105px; /* keeps text away from right edge */
+}
+
+.custom-link1 {
+  color: #000000;       /* Makes it the same color as surrounding text */
+  text-decoration: none; /* Removes underline */
+  padding: 0 15px; /* Adds space between links */
+  /* Optional hover effect */
+  /* transition: color 0.2s; */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  line-height: 1.6;
+  color: #333;
+  padding: 75px;
+}
+
+/* Banner */
+.banner {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.banner h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+/* Contact Info */
+.contact-info {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-info h2 {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #0077b6;
+}
+
+/* Contact Form */
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.contact-form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #0077b6;
+}
+
+form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+form input:focus,
+form textarea:focus {
+  outline: none;
+  border-color: #0077b6;
+  box-shadow: 0 0 4px rgba(0,119,182,0.3);
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1rem;
+  background: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #005f87;
+}
