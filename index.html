@@ -1,120 +1,462 @@
-<!-- 8 -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peter Wu</title>
-    <link id = "mainStyleSheet" rel="stylesheet" href="light.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    
+    <title>Peter Wu — Computer Science &amp; Cybersecurity</title>
+    <meta name="description" content="Peter Wu — computer science student at Texas A&M researching how to measure AI agent capabilities in cybersecurity.">
+    <meta name="theme-color" content="#f4f2ed" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315161a'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-style='italic' font-size='30' fill='%23f4f2ed' text-anchor='middle'%3Epw%3C/text%3E%3C/svg%3E">
+
+    <!-- Set the theme before first paint so there is no flash -->
+    <script>
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('theme'); } catch (e) {}
+            if (t !== 'light' && t !== 'dark') {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body> 
-    <div class="fixed-banner">
-        <div class="left-items">
-            <a href="index.html" class="custom-link1">Home</a>
-            <button onclick="toggleStyleSheet()" class="bb">
-                <svg id = "moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="moon-icon">
-                    <g transform="translate(-2,2)">
-                        <path d="M21 12.79A9 9 0 0 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
-                    </g>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Ambient layers -->
+    <div class="aurora" aria-hidden="true">
+        <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
+    </div>
+    <div class="dot-grid" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="cursor-ring" aria-hidden="true"><span class="cursor-label"></span></div>
+    <div class="cursor-dot" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <header class="nav" id="nav">
+        <a href="#top" class="nav-logo" aria-label="Peter Wu — back to top">
+            <span class="logo-mark">pw</span>
+        </a>
+        <nav class="nav-links" aria-label="Sections">
+            <a href="#about" data-section="about">About</a>
+            <a href="#experience" data-section="experience">Experience</a>
+            <a href="#work" data-section="work">Work</a>
+            <a href="#service" data-section="service">Service</a>
+            <a href="#contact" data-section="contact">Contact</a>
+            <span class="nav-indicator" aria-hidden="true"></span>
+        </nav>
+        <div class="nav-actions">
+            <button class="theme-toggle magnetic" id="themeToggle" type="button" aria-label="Toggle light and dark mode">
+                <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4.2"/>
+                    <g class="rays"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.4" y2="4.6"/></g>
                 </svg>
-                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="sun-icon">
-                    <circle cx="12" cy="12" r="5"/>
-                    <g stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="1" x2="12" y2="4"/>
-                        <line x1="12" y1="20" x2="12" y2="23"/>
-                        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/>
-                        <line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
-                        <line x1="1" y1="12" x2="4" y2="12"/>
-                        <line x1="20" y1="12" x2="23" y2="12"/>
-                        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/>
-                        <line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
-                    </g>
+                <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/>
                 </svg>
             </button>
+            <a class="btn btn-small magnetic" href="Wu_Peter_CV.pdf" target="_blank" rel="noopener">CV <span class="arrow">↗</span></a>
+            <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false">
+                <span></span><span></span>
+            </button>
         </div>
-        <div class="right-items">
-            <a href="contact.html" class="custom-link1">Contact Me (AI page)</a>
-        </div>
+    </header>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="#about"><span>01</span>About</a>
+        <a href="#experience"><span>02</span>Experience</a>
+        <a href="#work"><span>03</span>Work</a>
+        <a href="#service"><span>04</span>Service</a>
+        <a href="#contact"><span>05</span>Contact</a>
     </div>
 
-
-    <section class="back1">
-        <div class="titlelayout">
-            <div class="title-text">
-                <div class="line">Peter Wu</div>
-                <div class="line">Computer Scientist</div>
+    <main id="main">
+        <!-- HERO -->
+        <section class="hero" id="top">
+            <div class="hero-inner">
+                <div class="hero-copy">
+                    <p class="status reveal">
+                        <span class="pulse" aria-hidden="true"></span>
+                        Undergraduate Researcher · SUCCESS Lab
+                    </p>
+                    <h1 class="hero-title">
+                        <span class="line"><span class="scramble" data-text="Peter Wu">Peter Wu</span></span>
+                        <span class="line serif"><em>builds, breaks</em></span>
+                        <span class="line serif"><em>&amp; measures systems.</em></span>
+                    </h1>
+                    <p class="hero-sub reveal">
+                        Computer science at <strong>Texas A&amp;M</strong>, with minors in mathematics and cybersecurity.
+                        Currently researching how to rigorously measure what AI agents can actually do in security.
+                    </p>
+                    <div class="hero-cta reveal">
+                        <a href="#work" class="btn btn-primary magnetic">See my work <span class="arrow">→</span></a>
+                        <a href="#contact" class="btn btn-ghost magnetic">Get in touch</a>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-hidden="true">
+                    <canvas id="polyCanvas"></canvas>
+                    <p class="hero-hint mono">drag to spin</p>
+                </div>
             </div>
-            <div class="pipe"></div>
-            <img src="images/spinning_cube_smooth_black.gif" alt="spinning cube" class="black-cube">
-            <!-- <img src="images/spinning_cube_smooth_white.gif" alt="spinning cube" class="white-cube"> -->
-            <img src="images/spinning_icosahedron_smooth_dark.gif" alt="spinning cube" class="white-cube">
+            <div class="hero-meta mono">
+                <span>College Station, TX</span>
+                <span class="scroll-cue"><span class="scroll-line"></span>Scroll</span>
+                <span id="localTime">—</span>
+            </div>
+        </section>
 
+        <!-- MARQUEE -->
+        <div class="marquee" aria-label="Skills">
+            <div class="marquee-track">
+                <span>Penetration Testing</span><i>✦</i><span>Applied Cryptography</span><i>✦</i><span>Reverse Engineering</span><i>✦</i><span>AI Agent Evaluation</span><i>✦</i><span>Computer Vision</span><i>✦</i><span>PyTorch</span><i>✦</i><span>C++</span><i>✦</i><span>Python</span><i>✦</i><span>Ghidra</span><i>✦</i><span>Wireshark</span><i>✦</i>
+            </div>
+            <div class="marquee-track" aria-hidden="true">
+                <span>Penetration Testing</span><i>✦</i><span>Applied Cryptography</span><i>✦</i><span>Reverse Engineering</span><i>✦</i><span>AI Agent Evaluation</span><i>✦</i><span>Computer Vision</span><i>✦</i><span>PyTorch</span><i>✦</i><span>C++</span><i>✦</i><span>Python</span><i>✦</i><span>Ghidra</span><i>✦</i><span>Wireshark</span><i>✦</i>
+            </div>
         </div>
-    </section>
 
-    <div class="page-content">
-        <section class="slanted-section">
-            <div class="fly-in-left">
-                <div class="imgtxt-section-left">
-                    <div class="section-image">
-                        <div class="light">
-                            <img src="images/foldericonlight.png" alt="folder icon">
-                        </div>
-                        <div class="dark">
-                            <img src="images/foldericondark.png" alt="folder icon">
-                        </div>
+        <!-- ABOUT -->
+        <section class="section" id="about">
+            <div class="section-head">
+                <p class="eyebrow mono reveal"><span>01</span> About</p>
+                <h2 class="section-title reveal">From NAND gates <em>to</em> RSA, <br>then how it all <em>breaks.</em></h2>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p class="lead">
+                        I'm a computer scientist who likes understanding systems all the way down, then figuring out where they fail.
+                    </p>
+                    <p>
+                        I'm finishing my B.S. in three years at Texas A&amp;M, where I'm in the Brown Engineering Honors
+                        Program and working toward a Cyber Operations Certificate. My work sits where security, cryptography
+                        and machine learning meet: penetration testing industrial IoT, implementing cryptosystems from
+                        first principles, and building infrastructure to evaluate AI agents at scale.
+                    </p>
+                    <p>
+                        Outside of research I teach. I'm a TA for Texas A&amp;M's intro Python and C++ courses, and I've tutored students
+                        in physics, math and CS for six years.
+                    </p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat card tilt reveal">
+                        <span class="stat-num" data-count="4.00" data-decimals="2">0.00</span>
+                        <span class="stat-label">GPA, on a 4.00 scale</span>
                     </div>
-                    <div class="section-text">
-                        <h2>Technical Portfolio</h2>
-                        <p>As a computer scientist, I'm always looking for different ways to apply the many things that I learn. From something more fun and exciting to the technical and nitty gritty, one way I apply my learnings are through various projects.</p>
-                        <a href="projects.html" class="custom-link2">View portfolio -></a>
+                    <div class="stat card tilt reveal">
+                        <span class="stat-num" data-count="3">0</span>
+                        <span class="stat-label">Years to finish the degree</span>
+                    </div>
+                    <div class="stat card tilt reveal">
+                        <span class="stat-num" data-count="6">0</span>
+                        <span class="stat-label">Years tutoring students</span>
+                    </div>
+                    <div class="stat card tilt reveal">
+                        <span class="stat-num" data-count="1500" data-suffix="+">0</span>
+                        <span class="stat-label">People reached through service</span>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <section class="slanted-section alt">
-            <div class="fly-in-right">
-                <div class="imgtxt-section-right">
-                    <div class="section-text">
-                        <h2>Qualifications</h2>
-                        <p>As I continue to learn and grow as a computer scientist, I acrue more and more qualifications that show just how far I've come. As I do so, I am able to unlock even more oppurunities that continue to develop my knowledge base and skill set.<p>
-                        <a href="qualifications.html" class="custom-link3">View qualifications -></a>
+
+            <div class="bento">
+                <article class="card bento-edu spotlight reveal">
+                    <div class="card-top">
+                        <p class="mono tag">Education</p>
+                        <p class="mono muted">Aug 2024 — May 2027</p>
                     </div>
-                    <div class="section-image">
-                        <div class="light">
-                            <img src="images/papericonlight.png" alt="paper icon">
-                        </div>
-                        <div class="dark">
-                            <img src="images/papericondark.png" alt="paper icon">
-                        </div>
+                    <h3>Texas A&amp;M University</h3>
+                    <p class="muted">B.S. Computer Science · Minors in Mathematics &amp; Cybersecurity</p>
+                    <ul class="honors">
+                        <li>Brown Engineering Honors</li>
+                        <li>Cyber Operations Certificate</li>
+                        <li>Dean's Honor Roll</li>
+                    </ul>
+                    <p class="mono small-label">Coursework</p>
+                    <div class="chips">
+                        <span>Applied Cryptography</span><span>Software Reverse Engineering</span><span>Wireless &amp; Mobile Systems</span>
+                        <span>Cybersecurity Law</span><span>Communications &amp; Cryptography I &amp; II</span><span>Linear Algebra</span>
+                        <span>Differential Equations</span><span>Multivariable Calculus</span>
                     </div>
-                </div>
+                </article>
+
+                <article class="card spotlight reveal">
+                    <p class="mono tag">Security</p>
+                    <div class="chips"><span>Ghidra</span><span>Wireshark</span><span>Penetration Testing</span><span>Applied Cryptography</span></div>
+                </article>
+                <article class="card spotlight reveal">
+                    <p class="mono tag">ML &amp; Vision</p>
+                    <div class="chips"><span>PyTorch</span><span>OpenCV</span><span>LLM APIs</span><span>Prompt Engineering</span></div>
+                </article>
+                <article class="card spotlight reveal">
+                    <p class="mono tag">Programming</p>
+                    <div class="chips"><span>Python</span><span>C++</span><span>Java</span><span>JavaScript</span><span>React</span><span>Node.js</span><span>SQL</span><span>R</span><span>Scheme</span><span>HDL</span></div>
+                </article>
+                <article class="card spotlight reveal">
+                    <p class="mono tag">Systems &amp; Tools</p>
+                    <div class="chips"><span>Linux</span><span>Git</span><span>Google Cloud</span><span>Vercel</span><span>Railway</span><span>LaTeX</span></div>
+                    <p class="mono small-label">Languages</p>
+                    <div class="chips"><span>English (native)</span><span>Mandarin (conversational)</span></div>
+                </article>
             </div>
         </section>
 
-        <section class="slanted-section">
-            <div class="fly-in-left">
-                <div class="imgtxt-section-left">
-                    <div class="section-image">
-                        <div class="light">
-                            <img src="images/serviceiconlight.png" alt="service icon">
-                        </div>
-                        <div class="dark">
-                            <img src="images/serviceicondark.png" alt="service icon">
+        <!-- EXPERIENCE -->
+        <section class="section" id="experience">
+            <div class="section-head">
+                <p class="eyebrow mono reveal"><span>02</span> Experience</p>
+                <h2 class="section-title reveal">Research, industry <em>&amp;</em> the classroom.</h2>
+            </div>
+
+            <ol class="timeline">
+                <li class="tl-line" aria-hidden="true"><span class="tl-fill"></span></li>
+
+                <li class="tl-item reveal">
+                    <span class="tl-node" aria-hidden="true"></span>
+                    <div class="tl-date mono">May 2026 — Present</div>
+                    <div class="tl-body card spotlight">
+                        <p class="mono tag">Research</p>
+                        <h3>Undergraduate Researcher</h3>
+                        <p class="tl-org">SUCCESS Lab, Texas A&amp;M · advised by Dr. Guofei Gu</p>
+                        <ul>
+                            <li>Researching rigorous measurement of AI agent capabilities in cybersecurity. I'm one of four student researchers.</li>
+                            <li>Co-developing experiment infrastructure for reproducible, large-scale evaluation of AI agents.</li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="tl-item reveal">
+                    <span class="tl-node" aria-hidden="true"></span>
+                    <div class="tl-date mono">Jun 2026 — Jul 2026</div>
+                    <div class="tl-body card spotlight">
+                        <p class="mono tag">Industry</p>
+                        <h3>Intern, Industrial IoT Security &amp; Computer Vision</h3>
+                        <p class="tl-org">Netvine Technologies · Nanjing, China</p>
+                        <ul>
+                            <li>Penetration tested a networked industrial camera system built for safety-critical sites such as coal mines, and reported two vulnerabilities:
+                                <ul class="vulns">
+                                    <li><span class="sev">VULN</span> Unencrypted video broadcast, confirmed with a Wireshark capture, left live feeds open to passive interception.</li>
+                                    <li><span class="sev">VULN</span> The remote force-reset command sent the admin password in plaintext, so it could be stolen and used for an unauthorized reset.</li>
+                                </ul>
+                            </li>
+                            <li>Built a Python/OpenCV tool that automatically detects camera shake in live video feeds.</li>
+                            <li>Prototyped neural-network image classifiers in PyTorch as proof-of-concept ML components.</li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="tl-item reveal">
+                    <span class="tl-node" aria-hidden="true"></span>
+                    <div class="tl-date mono">Aug 2026 — Present</div>
+                    <div class="tl-body card spotlight">
+                        <p class="mono tag">Teaching</p>
+                        <h3>Undergraduate Teaching Assistant</h3>
+                        <p class="tl-org">Texas A&amp;M · CSCE 110 (Python) &amp; CSCE 120 (C++)</p>
+                        <ul>
+                            <li>Lead weekly lab sections: lecture reviews, hands-on programming labs and quizzes.</li>
+                            <li>Design exam questions, grade assignments, and hold office hours twice a week.</li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="tl-item reveal">
+                    <span class="tl-node" aria-hidden="true"></span>
+                    <div class="tl-date mono">Aug 2020 — Present</div>
+                    <div class="tl-body card spotlight">
+                        <p class="mono tag">Teaching</p>
+                        <h3>Independent Tutor</h3>
+                        <p class="tl-org">Physics · Mathematics · Computer Science · SAT</p>
+                        <ul>
+                            <li>Six years of tutoring domestic and international students, with grades improving by half a letter on average.</li>
+                        </ul>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- WORK -->
+        <section class="section" id="work">
+            <div class="section-head">
+                <p class="eyebrow mono reveal"><span>03</span> Selected Work</p>
+                <h2 class="section-title reveal">Things I've <em>built</em> from first principles.</h2>
+            </div>
+
+            <div class="projects">
+                <!-- RSA -->
+                <article class="project card tilt spotlight reveal">
+                    <div class="project-visual rsa-visual">
+                        <div class="rsa-demo">
+                            <label class="mono" for="rsaInput">plaintext</label>
+                            <input id="rsaInput" class="mono" type="text" maxlength="18" value="hello" autocomplete="off" spellcheck="false">
+                            <p class="mono rsa-label">ciphertext = m<sup>e</sup> mod n</p>
+                            <p class="mono rsa-out" id="rsaOut" aria-live="polite"></p>
+                            <p class="mono rsa-keys" id="rsaKeys"></p>
                         </div>
                     </div>
-                    <div class="section-text">
-                        <h2>Service</h2>
-                        <p>As much as I am a copmuter scientist, I am moreso a member of my community. I take pride in my services to the people and community that I interact with and I hope to continue to do my part in making the world a better place.</p>
-                        <a href="service.html" class="custom-link2">View service -></a>
+                    <div class="project-info">
+                        <div class="project-meta mono"><span>Fall 2025</span><span>C++ · GMP</span></div>
+                        <h3>RSA Cryptosystem</h3>
+                        <p>Key generation, encryption and decryption implemented from first principles with GMP big-integer arithmetic. Large primes come from Miller–Rabin testing with an error probability below 2<sup>−98</sup>.</p>
+                        <p class="hint mono">↑ type above to encrypt with a toy key</p>
                     </div>
+                </article>
+
+                <!-- Horus -->
+                <article class="project card tilt spotlight reveal">
+                    <div class="project-visual horus-visual">
+                        <svg class="horus-eye" viewBox="0 0 200 120" aria-hidden="true">
+                            <defs>
+                                <clipPath id="eyeClip"><path d="M10 60 Q100 -10 190 60 Q100 130 10 60 Z"/></clipPath>
+                            </defs>
+                            <path class="eye-outline" d="M10 60 Q100 -10 190 60 Q100 130 10 60 Z"/>
+                            <g clip-path="url(#eyeClip)">
+                                <g class="eye-pupil" id="eyePupil">
+                                    <circle class="iris" cx="100" cy="60" r="30"/>
+                                    <circle class="iris-ring" cx="100" cy="60" r="22"/>
+                                    <circle class="pupil" cx="100" cy="60" r="11"/>
+                                    <circle class="glint" cx="108" cy="52" r="4"/>
+                                </g>
+                                <rect class="eyelid" id="eyelid" x="0" y="-120" width="200" height="120"/>
+                            </g>
+                        </svg>
+                        <div class="horus-nodes" aria-hidden="true">
+                            <span style="--i:0">skills</span><span style="--i:1">fields</span><span style="--i:2">prompts</span><span style="--i:3">recs</span>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta mono"><span>Summer 2026</span><span>Python · Claude API</span></div>
+                        <h3>Horus</h3>
+                        <p>I owned data processing, skill tagging and LLM prompt engineering for the AI recommendation engine in a 33-person team's web app. The app explores how AI is changing different fields of study.</p>
+                        <p class="hint mono">↑ it's watching you</p>
+                    </div>
+                </article>
+
+                <!-- Hack -->
+                <article class="project card tilt spotlight reveal">
+                    <div class="project-visual hack-visual">
+                        <svg class="nand" viewBox="0 0 260 140" role="img" aria-label="Interactive NAND gate. Click inputs A and B to toggle them.">
+                            <line class="wire" id="wireA" x1="50" y1="48" x2="110" y2="48"/>
+                            <line class="wire" id="wireB" x1="50" y1="92" x2="110" y2="92"/>
+                            <line class="wire" id="wireOut" x1="186" y1="70" x2="222" y2="70"/>
+                            <path class="gate" d="M110 30 H145 A40 40 0 0 1 145 110 H110 Z"/>
+                            <circle class="bubble" cx="190" cy="70" r="5"/>
+                            <g class="nand-in" id="inA" tabindex="0" role="switch" aria-checked="false" aria-label="Input A">
+                                <circle cx="38" cy="48" r="13"/><text x="38" y="53">0</text>
+                            </g>
+                            <g class="nand-in" id="inB" tabindex="0" role="switch" aria-checked="false" aria-label="Input B">
+                                <circle cx="38" cy="92" r="13"/><text x="38" y="97">0</text>
+                            </g>
+                            <g class="nand-out" id="outQ">
+                                <circle cx="234" cy="70" r="13"/><text x="234" y="75">1</text>
+                            </g>
+                            <text class="gate-label" x="140" y="75">NAND</text>
+                        </svg>
+                    </div>
+                    <div class="project-info">
+                        <div class="project-meta mono"><span>Summer 2025</span><span>HDL · Hack Assembly</span></div>
+                        <h3>Hack Computer</h3>
+                        <p>A complete computer built up from NAND gates (multiplexers, ALU, RAM) and then programmed in its own assembly language. Every layer is built on the one below it.</p>
+                        <p class="hint mono">↑ click A and B. Everything starts here.</p>
+                    </div>
+                </article>
+            </div>
+
+            <div class="archive">
+                <div class="archive-head">
+                    <p class="mono tag">Archive</p>
+                    <a href="https://github.com/wupet/" target="_blank" rel="noopener" class="link-underline mono">All projects on GitHub ↗</a>
+                </div>
+                <ul class="archive-list">
+                    <li class="archive-row" data-img="images/battleship.jpg">
+                        <span class="mono muted">2025</span>
+                        <span class="archive-title">Battleship AI</span>
+                        <span class="archive-desc">Density maps + search-and-destroy to pick the statistically best shot</span>
+                        <span class="mono muted">Java</span>
+                    </li>
+                    <li class="archive-row" data-img="images/pawn.png">
+                        <span class="mono muted">2024</span>
+                        <span class="archive-title">Chess Game</span>
+                        <span class="archive-desc">Five-person team build with full move validation and visuals</span>
+                        <span class="mono muted">Python</span>
+                    </li>
+                </ul>
+                <div class="archive-preview" aria-hidden="true"><img alt=""></div>
+            </div>
+        </section>
+
+        <!-- SERVICE -->
+        <section class="section" id="service">
+            <div class="section-head">
+                <p class="eyebrow mono reveal"><span>04</span> Service</p>
+                <h2 class="section-title reveal">A computer scientist, <em>and first</em> a neighbor.</h2>
+            </div>
+
+            <a class="service-card reveal" href="https://www.lightandsaltassociation.org/en" target="_blank" rel="noopener" data-cursor="Visit">
+                <div class="service-bg" aria-hidden="true">
+                    <svg class="rays" viewBox="0 0 600 600" preserveAspectRatio="xMaxYMin slice">
+                        <path d="M600 60 A540 540 0 0 0 60 600"/>
+                        <path d="M600 160 A440 440 0 0 0 160 600"/>
+                        <path d="M600 250 A350 350 0 0 0 250 600"/>
+                        <path d="M600 330 A270 270 0 0 0 330 600"/>
+                        <path d="M600 400 A200 200 0 0 0 400 600"/>
+                    </svg>
+                </div>
+                <div class="service-content">
+                    <span class="service-logo"><img src="images/lightandsalt.png" alt="Light and Salt Association logo"></span>
+                    <p class="mono tag tag-light">Regional Mental Health Intern</p>
+                    <h3>Light and Salt Association</h3>
+                    <p>
+                        I planned and led <strong>Hope Bags</strong>, which brought together more than 40 Asian American youth in Houston to pack and hand out
+                        care packages for people experiencing homelessness. Working with NHCCW and Compassion United, we
+                        reached over 1,500 people through <em>Breakfast in the Park</em>.
+                    </p>
+                    <div class="service-stats">
+                        <div><span class="stat-num" data-count="40" data-suffix="+">0</span><span>youth volunteers led</span></div>
+                        <div><span class="stat-num" data-count="1500" data-suffix="+">0</span><span>people supported</span></div>
+                        <div><span class="stat-num" data-count="2">0</span><span>partner organizations</span></div>
+                    </div>
+                    <span class="service-arrow" aria-hidden="true">↗</span>
+                </div>
+            </a>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="section contact" id="contact">
+            <p class="eyebrow mono reveal"><span>05</span> Contact</p>
+            <h2 class="contact-title reveal">
+                <span>Let's build</span>
+                <span><em>something secure.</em></span>
+            </h2>
+            <div class="contact-actions reveal">
+                <button class="email-btn magnetic" id="copyEmail" type="button" data-email="wupet@tamu.edu" data-cursor="Copy">
+                    <span class="email-text">wupet@tamu.edu</span>
+                    <span class="email-icon" aria-hidden="true">⧉</span>
+                </button>
+                <div class="socials">
+                    <a href="https://github.com/wupet" target="_blank" rel="noopener" class="social magnetic">GitHub <span class="arrow">↗</span></a>
+                    <a href="https://www.linkedin.com/in/peterwutamu/" target="_blank" rel="noopener" class="social magnetic">LinkedIn <span class="arrow">↗</span></a>
+                    <a href="Wu_Peter_CV.pdf" target="_blank" rel="noopener" class="social magnetic">CV <span class="arrow">↗</span></a>
                 </div>
             </div>
         </section>
-    </div>
-    <script src="functions.js" defer></script>
+    </main>
+
+    <footer class="footer mono">
+        <span>© <span id="year">2026</span> Peter W. Wu</span>
+        <span class="footer-mid">Hand-built with HTML, CSS &amp; a little too much JavaScript.</span>
+        <a href="#top" class="link-underline">Back to top ↑</a>
+    </footer>
+
+    <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="assets/js/main.js" defer></script>
 </body>
 </html>
