@@ -82,10 +82,7 @@
         };
         tick();
     }
-    $$('.scramble').forEach((el) => {
-        setTimeout(() => scramble(el), 250);
-        el.addEventListener('mouseenter', () => scramble(el, 900));
-    });
+    $$('.scramble').forEach((el) => setTimeout(() => scramble(el), 250));
 
     /* ------------------------------------------------------------------
        Reveal on scroll (staggered per batch)
@@ -339,47 +336,9 @@
     });
 
     /* ------------------------------------------------------------------
-       Pointer-only flourishes: cursor, magnetic, tilt, dot grid, previews
+       Pointer-only flourishes: magnetic buttons, tilt
        ------------------------------------------------------------------ */
     if (finePointer && !reducedMotion) {
-        // Dot grid follows cursor
-        addEventListener('pointermove', (e) => {
-            root.style.setProperty('--mx', `${e.clientX}px`);
-            root.style.setProperty('--my', `${e.clientY}px`);
-        }, { passive: true });
-
-        // Custom cursor
-        const ring = $('.cursor-ring');
-        const dot = $('.cursor-dot');
-        const label = $('.cursor-label');
-        const pos = { x: innerWidth / 2, y: innerHeight / 2 };
-        const ringPos = { ...pos };
-        addEventListener('pointermove', (e) => {
-            pos.x = e.clientX; pos.y = e.clientY;
-            body.classList.add('has-cursor');
-            dot.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-        }, { passive: true });
-        document.addEventListener('pointerleave', () => body.classList.remove('has-cursor'));
-        (function loop() {
-            ringPos.x = lerp(ringPos.x, pos.x, 0.18);
-            ringPos.y = lerp(ringPos.y, pos.y, 0.18);
-            ring.style.transform = `translate(${ringPos.x}px, ${ringPos.y}px)`;
-            requestAnimationFrame(loop);
-        })();
-        document.addEventListener('pointerover', (e) => {
-            const t = e.target;
-            const labelled = t.closest('[data-cursor]');
-            const interactive = t.closest('a, button, input, [role="switch"], .archive-row, #polyCanvas');
-            if (labelled && (!interactive || interactive === labelled)) {
-                label.textContent = labelled.dataset.cursor;
-                body.classList.add('cursor-label-on');
-                body.classList.remove('cursor-hover');
-            } else {
-                body.classList.remove('cursor-label-on');
-                body.classList.toggle('cursor-hover', !!interactive);
-            }
-        });
-
         // Magnetic buttons
         $$('.magnetic').forEach((el) => {
             el.addEventListener('pointermove', (e) => {
@@ -402,76 +361,25 @@
             });
             el.addEventListener('pointerleave', () => { el.style.transform = ''; });
         });
-
-        // Archive hover image preview
-        const preview = $('.archive-preview');
-        const previewImg = $('img', preview);
-        const pp = { x: 0, y: 0, tx: 0, ty: 0 };
-        let previewRaf = null;
-        const previewLoop = () => {
-            pp.x = lerp(pp.x, pp.tx, 0.15);
-            pp.y = lerp(pp.y, pp.ty, 0.15);
-            preview.style.left = `${pp.x}px`;
-            preview.style.top = `${pp.y}px`;
-            previewRaf = requestAnimationFrame(previewLoop);
-        };
-        $$('.archive-row').forEach((row) => {
-            row.addEventListener('pointerenter', (e) => {
-                previewImg.src = row.dataset.img;
-                if (!preview.classList.contains('show')) { pp.x = e.clientX + 140; pp.y = e.clientY; }
-                preview.classList.add('show');
-                if (!previewRaf) previewLoop();
-            });
-            row.addEventListener('pointermove', (e) => { pp.tx = e.clientX + 140; pp.ty = e.clientY; });
-        });
-        $('.archive-list').addEventListener('pointerleave', () => {
-            preview.classList.remove('show');
-            setTimeout(() => {
-                if (!preview.classList.contains('show')) { cancelAnimationFrame(previewRaf); previewRaf = null; }
-            }, 400);
-        });
     }
 
     /* ------------------------------------------------------------------
-       Hero: interactive wireframe icosahedron (canvas 2D)
+       Hero: shaded icosahedron (canvas 2D)
+       Solid front faces + faint back edges remove the wireframe
+       "which way is it spinning?" ambiguity.
        ------------------------------------------------------------------ */
     const canvas = $('#polyCanvas');
-    if (canvas) {
+    if (canvas && window.Icosa) {
+        const { verts, edges, faces, edgeFaces, rotate } = window.Icosa;
         const ctx = canvas.getContext('2d');
-        const PHI = (1 + Math.sqrt(5)) / 2;
-        const raw = [
-            [-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0],
-            [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
-            [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1],
-        ];
-        const norm = Math.hypot(1, PHI);
-        const verts = raw.map((v) => v.map((c) => c / norm));
-        const edges = [];
-        for (let i = 0; i < raw.length; i++) {
-            for (let j = i + 1; j < raw.length; j++) {
-                const d = Math.hypot(raw[i][0] - raw[j][0], raw[i][1] - raw[j][1], raw[i][2] - raw[j][2]);
-                if (Math.abs(d - 2) < 0.01) edges.push([i, j]);
-            }
-        }
-        // Geodesic midpoints give the inner shell a finer mesh
-        const inner = edges.map(([i, j]) => {
-            const m = verts[i].map((c, k) => (c + verts[j][k]) / 2);
-            const l = Math.hypot(...m);
-            return m.map((c) => c / l);
-        });
-        const innerEdges = [];
-        for (let i = 0; i < inner.length; i++) {
-            for (let j = i + 1; j < inner.length; j++) {
-                const d = Math.hypot(inner[i][0] - inner[j][0], inner[i][1] - inner[j][1], inner[i][2] - inner[j][2]);
-                if (d < 0.66) innerEdges.push([i, j]);
-            }
-        }
-        // Orbiting particles on a tilted ring
-        const particles = Array.from({ length: 90 }, (_, i) => ({
-            a: (i / 90) * Math.PI * 2,
-            r: 1.45 + Math.random() * 0.22,
-            s: 0.6 + Math.random() * 0.8,
-            y: (Math.random() - 0.5) * 0.08,
+        const LIGHT = (() => { const l = [-0.45, -0.6, -0.65]; const m = Math.hypot(...l); return l.map((c) => c / m); })();
+        const SPIN = 0.004;
+
+        const particles = Array.from({ length: 64 }, (_, i) => ({
+            a: (i / 64) * Math.PI * 2,
+            r: 1.5 + Math.random() * 0.18,
+            s: 0.7 + Math.random() * 0.6,
+            y: (Math.random() - 0.5) * 0.06,
         }));
 
         let colors = {};
@@ -479,9 +387,9 @@
         readColors();
         themeListeners.push(() => requestAnimationFrame(readColors));
 
-        let W = 0, H = 0, dpr = 1;
+        let W = 0, H = 0;
         const resize = () => {
-            dpr = Math.min(devicePixelRatio || 1, 2);
+            const dpr = Math.min(devicePixelRatio || 1, 2);
             const r = canvas.getBoundingClientRect();
             W = r.width; H = r.height;
             canvas.width = W * dpr; canvas.height = H * dpr;
@@ -490,33 +398,62 @@
         resize();
         addEventListener('resize', resize);
 
-        const rot = { x: -0.35, y: 0.4, vx: 0, vy: 0.0035 };
+        /* Orientation is a rotation matrix rather than Euler angles. Drags
+           rotate around the screen's axes, so left/right stays left/right
+           even after the solid has been flipped upside down. */
+        const mul = (A, B) => A.map((row) => [0, 1, 2].map((j) => row[0] * B[0][j] + row[1] * B[1][j] + row[2] * B[2][j]));
+        const apply = (M, v) => M.map((row) => row[0] * v[0] + row[1] * v[1] + row[2] * v[2]);
+        // Positive angles move the face nearest the viewer right (Y) or down (X)
+        const rotY = (a) => { const c = Math.cos(a), s = Math.sin(a); return [[c, 0, -s], [0, 1, 0], [s, 0, c]]; };
+        const rotX = (a) => { const c = Math.cos(a), s = Math.sin(a); return [[1, 0, 0], [0, c, -s], [0, s, c]]; };
+        const axisAngle = ([x, y, z], a) => {
+            const c = Math.cos(a), s = Math.sin(a), k = 1 - c;
+            return [
+                [c + x * x * k, x * y * k - z * s, x * z * k + y * s],
+                [y * x * k + z * s, c + y * y * k, y * z * k - x * s],
+                [z * x * k - y * s, z * y * k + x * s, c + z * z * k],
+            ];
+        };
+        const orthonormalize = (M) => {
+            // Re-orthogonalize the columns so rounding error never skews the solid
+            const col = (j) => [M[0][j], M[1][j], M[2][j]];
+            const unit = (v) => { const m = Math.hypot(...v); return v.map((c) => c / m); };
+            const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+            const a = unit(col(0));
+            let b = col(1); const d = dot(a, b); b = unit(b.map((c, i) => c - d * a[i]));
+            const c = [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+            return [0, 1, 2].map((i) => [a[i], b[i], c[i]]);
+        };
+
+        const basis = [[1, 0, 0], [0, 1, 0], [0, 0, 1]].map((e) => rotate(e, -0.35, 0.4));
+        let orient = [0, 1, 2].map((i) => basis.map((v) => v[i]));
+        const restUp = rotate([0, 1, 0], -0.35, 0);
+        const vel = { x: 0, y: 0 };
+        let spin = -SPIN, spinDir = -1;
         const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
         let dragging = false, last = null;
 
         addEventListener('pointermove', (e) => {
-            tilt.tx = (e.clientY / innerHeight - 0.5) * 0.6;
-            tilt.ty = (e.clientX / innerWidth - 0.5) * 0.6;
+            tilt.tx = (e.clientY / innerHeight - 0.5) * 0.3;
+            tilt.ty = (e.clientX / innerWidth - 0.5) * 0.3;
             if (dragging && last) {
-                rot.vy = (e.clientX - last.x) * 0.0022;
-                rot.vx = (e.clientY - last.y) * 0.0022;
+                vel.y = (e.clientX - last.x) * 0.002;
+                vel.x = (e.clientY - last.y) * 0.002;
                 last = { x: e.clientX, y: e.clientY };
             }
         }, { passive: true });
         canvas.addEventListener('pointerdown', (e) => {
             dragging = true; last = { x: e.clientX, y: e.clientY };
+            vel.x = vel.y = spin = 0;
             canvas.classList.add('dragging');
         });
-        addEventListener('pointerup', () => { dragging = false; last = null; canvas.classList.remove('dragging'); });
-
-        const rotate = ([x, y, z], ax, ay) => {
-            const cy = Math.cos(ay), sy = Math.sin(ay);
-            let x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
-            const cx = Math.cos(ax), sx = Math.sin(ax);
-            const y1 = y * cx - z1 * sx;
-            z1 = y * sx + z1 * cx;
-            return [x1, y1, z1];
-        };
+        addEventListener('pointerup', () => {
+            if (!dragging) return;
+            dragging = false; last = null;
+            // Keep spinning the way it was thrown instead of snapping back
+            if (Math.abs(vel.y) > 0.001) spinDir = Math.sign(vel.y);
+            canvas.classList.remove('dragging');
+        });
 
         let visible = true;
         new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
@@ -526,74 +463,113 @@
             if (visible && !document.hidden) draw();
             if (!reducedMotion) requestAnimationFrame(frame);
         }
+
         function draw() {
             t += 1;
-            rot.x += rot.vx; rot.y += rot.vy;
+            orient = mul(mul(rotX(vel.x), rotY(vel.y)), orient);
             if (!dragging) {
-                rot.vx *= 0.95;
-                rot.vy = lerp(rot.vy, 0.0035, 0.02);
+                vel.x *= 0.94;
+                vel.y *= 0.97;
+                // Idle spin around the solid's own axis, which slowly rights itself
+                spin = lerp(spin, SPIN * spinDir, 0.03);
+                orient = mul(orient, rotY(spin));
+                const up = apply(orient, [0, 1, 0]);
+                const axis = [up[1] * restUp[2] - up[2] * restUp[1], up[2] * restUp[0] - up[0] * restUp[2], up[0] * restUp[1] - up[1] * restUp[0]];
+                const sin = Math.hypot(...axis);
+                if (sin > 1e-4) {
+                    const angle = Math.atan2(sin, up[0] * restUp[0] + up[1] * restUp[1] + up[2] * restUp[2]);
+                    orient = mul(axisAngle(axis.map((c) => c / sin), angle * 0.01), orient);
+                }
             }
-            tilt.x = lerp(tilt.x, tilt.tx, 0.05);
-            tilt.y = lerp(tilt.y, tilt.ty, 0.05);
+            orient = orthonormalize(orient);
+            tilt.x = lerp(tilt.x, tilt.tx, 0.04);
+            tilt.y = lerp(tilt.y, tilt.ty, 0.04);
 
             ctx.clearRect(0, 0, W, H);
             const R = Math.min(W, H) * 0.3;
             const cx = W / 2, cy = H / 2;
-            const breathe = 1 + Math.sin(t * 0.012) * 0.025;
-            const project = (p, scale) => {
-                const persp = 3.2 / (3.2 + p[2]);
-                return [cx + p[0] * R * scale * persp, cy + p[1] * R * scale * persp, p[2]];
+            const project = (p) => {
+                const persp = 3 / (3 + p[2]);
+                return [cx + p[0] * R * persp, cy + p[1] * R * persp, p[2]];
             };
-            const ax = rot.x + tilt.x, ay = rot.y + tilt.y;
+            const view = mul(mul(rotX(tilt.x), rotY(tilt.y)), orient);
 
-            // particles (behind + in front, depth-shaded)
+            const R3 = verts.map((v) => apply(view, v));
+            const P = R3.map(project);
+            const faceInfo = faces.map((f) => {
+                const c = [0, 1, 2].map((k) => (R3[f[0]][k] + R3[f[1]][k] + R3[f[2]][k]) / 3);
+                const m = Math.hypot(...c);
+                const n = c.map((v) => v / m);
+                return { f, front: n[2] < 0, light: Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]), z: c[2] };
+            });
+
+            // Orbiting particles, split so the solid occludes the far half
+            const ring = particles.map((p) => {
+                const a = p.a + t * 0.0022 * p.s;
+                return project(rotate([Math.cos(a) * p.r, p.y, Math.sin(a) * p.r], 1.2 + tilt.x * 0.4, tilt.y * 0.4));
+            });
+            const drawParticles = (behind) => {
+                ctx.fillStyle = colors.accent;
+                ring.forEach(([x, y, z]) => {
+                    if ((z > 0) !== behind) return;
+                    ctx.globalAlpha = behind ? 0.18 : 0.6;
+                    ctx.beginPath();
+                    ctx.arc(x, y, behind ? 1 : 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            };
+            drawParticles(true);
+
+            // Hidden edges: very faint and dashed
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = colors.ink;
+            ctx.setLineDash([2, 5]);
+            ctx.globalAlpha = 0.12;
+            edges.forEach(([i, j], ei) => {
+                if (edgeFaces[ei].some((fi) => faceInfo[fi].front)) return;
+                ctx.beginPath(); ctx.moveTo(P[i][0], P[i][1]); ctx.lineTo(P[j][0], P[j][1]); ctx.stroke();
+            });
+            ctx.setLineDash([]);
+
+            // Front faces, lit by a soft key light
             ctx.fillStyle = colors.accent;
-            particles.forEach((p) => {
-                const a = p.a + t * 0.002 * p.s;
-                let pt = [Math.cos(a) * p.r, p.y, Math.sin(a) * p.r];
-                pt = rotate(pt, 1.15 + tilt.x * 0.5, tilt.y * 0.5);
-                const [x, y, z] = project(pt, 1);
-                ctx.globalAlpha = clamp(0.55 - z * 0.3, 0.08, 0.8);
+            faceInfo.filter((fi) => fi.front).sort((a, b) => b.z - a.z).forEach(({ f, light }) => {
+                ctx.globalAlpha = 0.05 + light * 0.22;
                 ctx.beginPath();
-                ctx.arc(x, y, clamp(1.6 - z * 0.6, 0.5, 2.4), 0, Math.PI * 2);
+                ctx.moveTo(P[f[0]][0], P[f[0]][1]);
+                ctx.lineTo(P[f[1]][0], P[f[1]][1]);
+                ctx.lineTo(P[f[2]][0], P[f[2]][1]);
+                ctx.closePath();
                 ctx.fill();
             });
 
-            // inner geodesic shell, counter-rotating
-            const innerP = inner.map((v) => project(rotate(v, -ax * 0.8, -ay * 1.3 + t * 0.002), 0.62 * breathe));
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = colors.accent;
-            innerEdges.forEach(([i, j]) => {
-                const z = (innerP[i][2] + innerP[j][2]) / 2;
-                ctx.globalAlpha = clamp(0.35 - z * 0.25, 0.06, 0.55);
-                ctx.beginPath();
-                ctx.moveTo(innerP[i][0], innerP[i][1]);
-                ctx.lineTo(innerP[j][0], innerP[j][1]);
-                ctx.stroke();
+            // Visible edges
+            ctx.lineWidth = 1.4;
+            ctx.lineJoin = 'round';
+            ctx.globalAlpha = 0.8;
+            edges.forEach(([i, j], ei) => {
+                if (!edgeFaces[ei].some((fi) => faceInfo[fi].front)) return;
+                ctx.beginPath(); ctx.moveTo(P[i][0], P[i][1]); ctx.lineTo(P[j][0], P[j][1]); ctx.stroke();
             });
 
-            // outer icosahedron
-            const P = verts.map((v) => project(rotate(v, ax, ay), breathe));
-            ctx.strokeStyle = colors.ink;
-            ctx.lineWidth = 1.4;
-            edges.forEach(([i, j]) => {
-                const z = (P[i][2] + P[j][2]) / 2;
-                ctx.globalAlpha = clamp(0.62 - z * 0.45, 0.1, 0.95);
-                ctx.beginPath();
-                ctx.moveTo(P[i][0], P[i][1]);
-                ctx.lineTo(P[j][0], P[j][1]);
-                ctx.stroke();
-            });
-            P.forEach(([x, y, z], i) => {
-                ctx.globalAlpha = clamp(0.9 - z * 0.5, 0.2, 1);
+            // Visible vertices
+            const seen = new Set();
+            faceInfo.forEach((fi) => { if (fi.front) fi.f.forEach((v) => seen.add(v)); });
+            seen.forEach((i) => {
+                ctx.globalAlpha = 1;
                 ctx.fillStyle = i % 4 === 0 ? colors.accent2 : colors.ink;
                 ctx.beginPath();
-                ctx.arc(x, y, clamp(3.4 - z * 1.4, 1.4, 5), 0, Math.PI * 2);
+                ctx.arc(P[i][0], P[i][1], 2.8, 0, Math.PI * 2);
                 ctx.fill();
             });
+
+            drawParticles(false);
             ctx.globalAlpha = 1;
         }
         frame();
         if (reducedMotion) themeListeners.push(() => requestAnimationFrame(draw));
     }
+
+    // Small API for the other modules (tree, playground, terminal)
+    window.site = { setTheme, showToast, scramble, reducedMotion, onTheme: (fn) => themeListeners.push(fn) };
 })();

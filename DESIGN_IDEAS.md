@@ -14,15 +14,15 @@ Put an `x` in the box (`- [x]`) for anything you'd like added, then tell me to b
 - [ ] **Hero shape morphs** between cube → icosahedron → sphere as you scroll (callback to your old spinning GIFs)
 - [ ] **Rotating role word**: "Peter Wu is a *researcher / pentester / TA / builder*" cycling with the scramble effect
 - [ ] **Particle name**: your name made of particles that scatter from the cursor and re-form
-- [ ] **Terminal easter egg**: press `` ` `` to open a fake shell (`whoami`, `ls projects`, `cat cv.txt`, `sudo hire peter`)
+- [x] **Terminal easter egg**: press `` ` `` to open a fake shell (`whoami`, `ls projects`, `cat cv.txt`, `sudo hire peter`) · ✅ built
 
 ## Content & sections
-- [ ] **Full RSA playground**: pick your own small primes p and q, and watch the key generation steps (φ(n), e, d) animate
+- [x] **Full RSA playground**: pick your own small primes p and q, and watch the key generation steps (φ(n), e, d) animate · ✅ built
 - [ ] **Battleship AI mini-game**: a small playable grid where you can watch the density-map heat overlay pick shots
 - [ ] **Hack computer "stack" diagram**: an interactive NAND → gates → ALU → CPU layer diagram you can click through
 - [ ] **"Now" section**: what I'm reading, learning and working on this semester
 - [ ] **Writing / notes section**: short posts on CTF write-ups, crypto explainers, research notes
-- [ ] **Courses as a skill-tree / constellation graph** instead of chips
+- [x] **Courses as a skill-tree / constellation graph** instead of chips · ✅ built
 - [ ] **Photo / "off the clock" strip**: travel, hobbies, the Nanjing internship (humanizes the site)
 - [ ] **Testimonials** from a professor, TA supervisor, or students you've tutored
 - [ ] **Embedded CV viewer** with a styled download button (instead of just a link)
@@ -35,4 +35,4 @@ Put an `x` in the box (`- [x]`) for anything you'd like added, then tell me to b
 - [ ] **Animated SVG signature** that draws itself in the footer
 - [ ] **Visitor-local greeting**: "Good evening 👋" based on the visitor's time of day
 - [ ] **Open Graph share image**: a nice preview card when your link is pasted into LinkedIn, iMessage or Discord
-- [ ] **Custom 404 page**: "ERROR 404: packet lost", with the icosahedron shattering
+- [x] **Custom 404 page**: "ERROR 404: packet lost", with the icosahedron shattering · ✅ built

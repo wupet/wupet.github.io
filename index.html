@@ -33,11 +33,8 @@
     <div class="aurora" aria-hidden="true">
         <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
     </div>
-    <div class="dot-grid" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
     <div class="scroll-progress" aria-hidden="true"></div>
-    <div class="cursor-ring" aria-hidden="true"><span class="cursor-label"></span></div>
-    <div class="cursor-dot" aria-hidden="true"></div>
 
     <!-- Navigation -->
     <header class="nav" id="nav">
@@ -180,12 +177,12 @@
                         <li>Cyber Operations Certificate</li>
                         <li>Dean's Honor Roll</li>
                     </ul>
-                    <p class="mono small-label">Coursework</p>
+                    <p class="mono small-label">Currently taking</p>
                     <div class="chips">
-                        <span>Applied Cryptography</span><span>Software Reverse Engineering</span><span>Wireless &amp; Mobile Systems</span>
-                        <span>Cybersecurity Law</span><span>Communications &amp; Cryptography I &amp; II</span><span>Linear Algebra</span>
-                        <span>Differential Equations</span><span>Multivariable Calculus</span>
+                        <span>CSCE 652 · Software Reverse Engineering <b class="grad-badge">GRAD</b></span>
+                        <span>CSCE 464 · Wireless &amp; Mobile Systems</span>
                     </div>
+                    <a href="#tech-tree" class="link-underline mono edu-tree-link">Explore the full course tech tree ↓</a>
                 </article>
 
                 <article class="card spotlight reveal">
@@ -206,6 +203,30 @@
                     <p class="mono small-label">Languages</p>
                     <div class="chips"><span>English (native)</span><span>Mandarin (conversational)</span></div>
                 </article>
+            </div>
+
+            <div class="tree-wrap" id="tech-tree">
+                <div class="tree-head reveal">
+                    <div>
+                        <p class="mono tag">Tech tree</p>
+                        <h3 class="tree-title">Every course, <em>and what it unlocked.</em></h3>
+                    </div>
+                    <div class="tree-legend mono" aria-hidden="true">
+                        <span data-track="core">Core CS</span>
+                        <span data-track="systems">Systems</span>
+                        <span data-track="security">Security &amp; Crypto</span>
+                        <span data-track="math">Math</span>
+                    </div>
+                </div>
+                <p class="tree-sub reveal">Hover or tap a course to trace what it builds on and what it led to. The links show how the material builds, not official prerequisites.</p>
+                <div class="tree card reveal" id="tree">
+                    <svg class="tree-edges" id="treeEdges" aria-hidden="true"></svg>
+                    <div class="tree-cols" id="treeCols" aria-hidden="true"></div>
+                    <div class="tree-nodes" id="treeNodes" role="list" aria-label="Courses taken"></div>
+                </div>
+                <div class="tree-info card reveal" id="treeInfo" aria-live="polite">
+                    <p class="mono muted">Select a course to see details.</p>
+                </div>
             </div>
         </section>
 
@@ -305,7 +326,7 @@
                         <div class="project-meta mono"><span>Fall 2025</span><span>C++ · GMP</span></div>
                         <h3>RSA Cryptosystem</h3>
                         <p>Key generation, encryption and decryption implemented from first principles with GMP big-integer arithmetic. Large primes come from Miller–Rabin testing with an error probability below 2<sup>−98</sup>.</p>
-                        <p class="hint mono">↑ type above to encrypt with a toy key</p>
+                        <button class="playground-btn mono" id="openRsa" type="button">Open the full RSA playground <span class="arrow">→</span></button>
                     </div>
                 </article>
 
@@ -375,20 +396,19 @@
                     <a href="https://github.com/wupet/" target="_blank" rel="noopener" class="link-underline mono">All projects on GitHub ↗</a>
                 </div>
                 <ul class="archive-list">
-                    <li class="archive-row" data-img="images/battleship.jpg">
+                    <li class="archive-row">
                         <span class="mono muted">2025</span>
                         <span class="archive-title">Battleship AI</span>
                         <span class="archive-desc">Density maps + search-and-destroy to pick the statistically best shot</span>
                         <span class="mono muted">Java</span>
                     </li>
-                    <li class="archive-row" data-img="images/pawn.png">
+                    <li class="archive-row">
                         <span class="mono muted">2024</span>
                         <span class="archive-title">Chess Game</span>
                         <span class="archive-desc">Five-person team build with full move validation and visuals</span>
                         <span class="mono muted">Python</span>
                     </li>
                 </ul>
-                <div class="archive-preview" aria-hidden="true"><img alt=""></div>
             </div>
         </section>
 
@@ -399,7 +419,7 @@
                 <h2 class="section-title reveal">A computer scientist, <em>and first</em> a neighbor.</h2>
             </div>
 
-            <a class="service-card reveal" href="https://www.lightandsaltassociation.org/en" target="_blank" rel="noopener" data-cursor="Visit">
+            <a class="service-card reveal" href="https://www.lightandsaltassociation.org/en" target="_blank" rel="noopener">
                 <div class="service-bg" aria-hidden="true">
                     <svg class="rays" viewBox="0 0 600 600" preserveAspectRatio="xMaxYMin slice">
                         <path d="M600 60 A540 540 0 0 0 60 600"/>
@@ -436,7 +456,7 @@
                 <span><em>something secure.</em></span>
             </h2>
             <div class="contact-actions reveal">
-                <button class="email-btn magnetic" id="copyEmail" type="button" data-email="wupet@tamu.edu" data-cursor="Copy">
+                <button class="email-btn magnetic" id="copyEmail" type="button" data-email="wupet@tamu.edu">
                     <span class="email-text">wupet@tamu.edu</span>
                     <span class="email-icon" aria-hidden="true">⧉</span>
                 </button>
@@ -451,12 +471,69 @@
 
     <footer class="footer mono">
         <span>© <span id="year">2026</span> Peter W. Wu</span>
-        <span class="footer-mid">Hand-built with HTML, CSS &amp; a little too much JavaScript.</span>
+        <button class="footer-mid term-hint" id="openTerm" type="button">Press <kbd>`</kbd> to open a terminal</button>
         <a href="#top" class="link-underline">Back to top ↑</a>
     </footer>
 
     <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
+    <!-- RSA playground -->
+    <dialog class="rsa-dialog" id="rsaDialog" aria-labelledby="rsaTitle">
+        <div class="rsa-pg">
+            <header class="rsa-pg-head">
+                <div>
+                    <p class="mono tag">Playground</p>
+                    <h2 id="rsaTitle">RSA, <em>step by step.</em></h2>
+                </div>
+                <button class="dialog-close" type="button" data-close aria-label="Close playground">✕</button>
+            </header>
+
+            <div class="rsa-pg-inputs">
+                <label class="field">
+                    <span class="mono">prime p</span>
+                    <input class="mono" id="pgP" type="text" autofocus inputmode="numeric" value="61" autocomplete="off">
+                    <span class="field-status mono" id="pgPStatus"></span>
+                </label>
+                <label class="field">
+                    <span class="mono">prime q</span>
+                    <input class="mono" id="pgQ" type="text" inputmode="numeric" value="53" autocomplete="off">
+                    <span class="field-status mono" id="pgQStatus"></span>
+                </label>
+                <label class="field field-wide">
+                    <span class="mono">message</span>
+                    <input class="mono" id="pgMsg" type="text" value="hi" maxlength="24" autocomplete="off" spellcheck="false">
+                </label>
+                <div class="rsa-pg-actions">
+                    <button class="btn btn-ghost" id="pgRandom" type="button">Random primes</button>
+                    <button class="btn btn-primary" id="pgRun" type="button">Generate keys <span class="arrow">→</span></button>
+                </div>
+            </div>
+            <p class="mono rsa-pg-note">Primes are checked with Miller–Rabin, the same test used in my C++ implementation. Keep them under about 10<sup>6</sup> so the numbers stay readable.</p>
+
+            <ol class="rsa-steps" id="pgSteps"></ol>
+        </div>
+    </dialog>
+
+    <!-- Terminal easter egg -->
+    <div class="terminal" id="terminal" role="dialog" aria-modal="false" aria-label="Terminal" hidden>
+        <div class="term-bar">
+            <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="mono">guest@wupet: ~</span>
+            <button class="term-close" type="button" id="termClose" aria-label="Close terminal">✕</button>
+        </div>
+        <div class="term-body mono" id="termBody">
+            <div class="term-out" id="termOut"></div>
+            <form class="term-line" id="termForm" autocomplete="off">
+                <label for="termInput" class="term-prompt">guest@wupet:~$</label>
+                <input id="termInput" type="text" spellcheck="false" autocapitalize="off" autocomplete="off">
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/icosa.js" defer></script>
     <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/tree.js" defer></script>
+    <script src="assets/js/playground.js" defer></script>
+    <script src="assets/js/terminal.js" defer></script>
 </body>
 </html>

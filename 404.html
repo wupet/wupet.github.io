@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 · Packet lost · Peter Wu</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315161a'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-style='italic' font-size='30' fill='%23f4f2ed' text-anchor='middle'%3Epw%3C/text%3E%3C/svg%3E">
+    <script>
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('theme'); } catch (e) {}
+            if (t !== 'light' && t !== 'dark') {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Absolute paths: GitHub Pages serves this file for any missing URL -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .nf {
+            min-height: 100svh; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 24px;
+            max-width: var(--max); margin: 0 auto; padding: 96px var(--gutter);
+        }
+        .nf-title {
+            margin: 0; font-weight: 500; letter-spacing: -0.05em; line-height: 0.95;
+            font-size: clamp(64px, 10vw, 148px);
+        }
+        .nf-title em {
+            display: inline-block; padding: 0 0.1em 0.2em 0; margin-bottom: -0.2em;
+            background: linear-gradient(100deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .nf-copy p { color: var(--ink-2); max-width: 44ch; margin: 24px 0 32px; }
+        .nf-trace { margin: 0 0 36px; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); line-height: 1.8; }
+        .nf-trace .lost { color: var(--accent-2); }
+        .nf-visual { position: relative; aspect-ratio: 1; width: 100%; max-width: 560px; justify-self: end; }
+        #shatter { width: 100%; height: 100%; cursor: pointer; }
+        .nf-hint { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); margin: 0; color: var(--ink-3); white-space: nowrap; }
+        .nf-home { position: fixed; top: 24px; left: var(--gutter); text-decoration: none; }
+        @media (max-width: 880px) {
+            .nf { grid-template-columns: 1fr; padding-top: 72px; }
+            .nf-visual { order: -1; max-width: 360px; justify-self: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+    <div class="grain" aria-hidden="true"></div>
+    <a href="/" class="nf-home logo-mark" aria-label="Peter Wu home">pw</a>
+
+    <main class="nf">
+        <div class="nf-copy">
+            <p class="eyebrow mono"><span>404</span> Not found</p>
+            <h1 class="nf-title">Packet<br><em>lost.</em></h1>
+            <p>The page you asked for was dropped somewhere between here and there. It may have moved when this site was redesigned.</p>
+            <pre class="nf-trace mono" aria-label="Traceroute showing the request timing out">$ traceroute <span id="nfPath">/this-page</span>
+ 1  wupet.github.io        0.4 ms
+ 2  index.html             0.9 ms
+ 3  <span class="lost">* * *  request timed out</span></pre>
+            <a href="/" class="btn btn-primary">Take me home <span class="arrow">→</span></a>
+        </div>
+        <div class="nf-visual">
+            <canvas id="shatter" aria-label="A shattered icosahedron. Click to reassemble it."></canvas>
+            <p class="nf-hint mono">click to reassemble</p>
+        </div>
+    </main>
+
+    <script src="/assets/js/icosa.js"></script>
+    <script>
+    (() => {
+        'use strict';
+        const pathEl = document.getElementById('nfPath');
+        pathEl.textContent = location.pathname.length > 32 ? location.pathname.slice(0, 31) + '…' : location.pathname;
+
+        const canvas = document.getElementById('shatter');
+        if (!window.Icosa) return;
+        const { verts, faces, rotate } = window.Icosa;
+        const ctx = canvas.getContext('2d');
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const colors = { ink: css('--ink'), accent: css('--accent'), accent2: css('--accent-2') };
+        const lerp = (a, b, t) => a + (b - a) * t;
+
+        let W, H;
+        const resize = () => {
+            const dpr = Math.min(devicePixelRatio || 1, 2);
+            const r = canvas.getBoundingClientRect();
+            W = r.width; H = r.height;
+            canvas.width = W * dpr; canvas.height = H * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        addEventListener('resize', resize);
+
+        // Each face becomes a fragment with its own offset, spin and velocity
+        const frags = faces.map((f) => {
+            const c = [0, 1, 2].map((k) => (verts[f[0]][k] + verts[f[1]][k] + verts[f[2]][k]) / 3);
+            const m = Math.hypot(...c);
+            return {
+                local: f.map((vi) => verts[vi].map((v, k) => v - c[k])),
+                home: c, dir: c.map((v) => v / m),
+                off: [0, 0, 0], vel: [0, 0, 0],
+                rx: 0, ry: 0, vrx: 0, vry: 0,
+            };
+        });
+
+        let state = 'whole';   // whole -> exploding -> reassembling -> whole
+        let timer = 0;
+        let spin = 0;
+
+        function explode() {
+            state = 'exploding';
+            frags.forEach((fr) => {
+                const s = 0.05 + Math.random() * 0.05;
+                fr.vel = fr.dir.map((d) => d * s + (Math.random() - 0.5) * 0.02);
+                fr.vrx = (Math.random() - 0.5) * 0.12;
+                fr.vry = (Math.random() - 0.5) * 0.12;
+            });
+        }
+        function reassemble() { if (state !== 'reassembling') { state = 'reassembling'; timer = 0; } }
+        canvas.addEventListener('click', reassemble);
+
+        const mouse = { x: -1e4, y: -1e4 };
+        canvas.addEventListener('pointermove', (e) => {
+            const r = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+        });
+        canvas.addEventListener('pointerleave', () => { mouse.x = mouse.y = -1e4; });
+
+        function draw() {
+            timer++;
+            spin += 0.004;
+            if (state === 'whole' && timer > (reduced ? 1 : 70)) explode();
+            if (state === 'reassembling' && timer > 60) { state = 'whole'; timer = 0; }
+
+            ctx.clearRect(0, 0, W, H);
+            const R = Math.min(W, H) * 0.24;
+            const cx = W / 2, cy = H / 2;
+            const project = (p) => { const s = 3 / (3 + p[2]); return [cx + p[0] * R * s, cy + p[1] * R * s, p[2]]; };
+
+            const polys = frags.map((fr) => {
+                if (state === 'exploding') {
+                    fr.off = fr.off.map((o, k) => o + fr.vel[k]);
+                    fr.vel = fr.vel.map((v) => v * 0.975);
+                    fr.rx += fr.vrx; fr.ry += fr.vry;
+                    fr.vrx *= 0.99; fr.vry *= 0.99;
+                    // gentle idle drift once the burst has slowed
+                    fr.rx += 0.002; fr.ry += 0.0015;
+                } else if (state === 'reassembling') {
+                    fr.off = fr.off.map((o) => lerp(o, 0, 0.12));
+                    fr.rx = lerp(fr.rx, 0, 0.12); fr.ry = lerp(fr.ry, 0, 0.12);
+                }
+                const pts = fr.local.map((v) => {
+                    const lv = rotate(v, fr.rx, fr.ry);
+                    const world = [lv[0] + fr.home[0] + fr.off[0], lv[1] + fr.home[1] + fr.off[1], lv[2] + fr.home[2] + fr.off[2]];
+                    return project(rotate(world, -0.35, spin));
+                });
+                const z = (pts[0][2] + pts[1][2] + pts[2][2]) / 3;
+                return { pts, z };
+            });
+
+            // push fragments away from the cursor
+            if (state === 'exploding') {
+                polys.forEach((p, i) => {
+                    const px = (p.pts[0][0] + p.pts[1][0] + p.pts[2][0]) / 3;
+                    const py = (p.pts[0][1] + p.pts[1][1] + p.pts[2][1]) / 3;
+                    const d = Math.hypot(px - mouse.x, py - mouse.y);
+                    if (d < 90) {
+                        const f = (1 - d / 90) * 0.004;
+                        frags[i].vel[0] += ((px - mouse.x) / (d || 1)) * f;
+                        frags[i].vel[1] += ((py - mouse.y) / (d || 1)) * f;
+                    }
+                });
+            }
+
+            polys.sort((a, b) => b.z - a.z).forEach(({ pts, z }, i) => {
+                ctx.beginPath();
+                ctx.moveTo(pts[0][0], pts[0][1]);
+                ctx.lineTo(pts[1][0], pts[1][1]);
+                ctx.lineTo(pts[2][0], pts[2][1]);
+                ctx.closePath();
+                ctx.globalAlpha = Math.max(0.05, 0.22 - z * 0.08);
+                ctx.fillStyle = i % 7 === 0 ? colors.accent2 : colors.accent;
+                ctx.fill();
+                ctx.globalAlpha = Math.max(0.25, 0.85 - z * 0.25);
+                ctx.strokeStyle = colors.ink;
+                ctx.lineWidth = 1.2;
+                ctx.stroke();
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+    </script>
+</body>
+</html>
