@@ -43,6 +43,48 @@
     const gcd = (a, b) => { while (b) [a, b] = [b, a % b]; return a; };
     const fmt = (n) => n.toLocaleString('en-US');
 
+    // Break n - 1 = 2^s · d and run the Miller–Rabin witnesses, keeping the trace
+    function mrDetail(n) {
+        let d = n - 1n, s = 0;
+        while ((d & 1n) === 0n) { d >>= 1n; s++; }
+        const checks = BASES.filter((a) => a < n).slice(0, 5).map((a) => {
+            let x = modPow(a, d, n);
+            let pass = (x === 1n || x === n - 1n);
+            if (!pass) for (let i = 1; i < s; i++) { x = (x * x) % n; if (x === n - 1n) { pass = true; break; } }
+            return { a, pass };
+        });
+        return { s, d, checks };
+    }
+
+    // Search upward from a random odd seed, logging every rejected candidate
+    function generatePrimeTrace(lo, hi) {
+        let c = (BigInt(lo + Math.floor(Math.random() * (hi - lo))) | 1n);
+        const tried = [];
+        while (!millerRabin(c)) {
+            const f = smallFactor(c);
+            tried.push({ c, reason: f ? `${fmt(f)} × ${fmt(c / f)}` : 'fails Miller–Rabin' });
+            c += 2n;
+            if (tried.length > 60) break;
+        }
+        return { prime: c, tried };
+    }
+
+    let genTrace = null; // {p, q} traces from the last "Generate primes" click, or null for manual entry
+
+    function renderGen(tr, name, prime) {
+        const n = tr.tried.length;
+        const sample = tr.tried.slice(-3);
+        return `<p class="eq">${name} = <b>${fmt(prime)}</b></p>
+            <p class="why">Started at a random odd number and stepped up, rejecting ${n} composite${n === 1 ? '' : 's'} before this one passed.</p>
+            <div class="gen-trace mono">${sample.map((t) => `<span class="rej">${fmt(t.c)} &mdash; ${t.reason}</span>`).join('')}<span class="acc-ok">${fmt(prime)} &mdash; prime &#10003;</span></div>`;
+    }
+
+    function renderWitness(prime) {
+        const { s, d, checks } = mrDetail(prime);
+        return `<p class="why">Miller–Rabin on ${fmt(prime)}: write ${fmt(prime)} − 1 = 2<sup>${s}</sup> · ${fmt(d)}, then test a few bases. A prime passes every one.</p>
+            <div class="gen-trace mono">${checks.map((c) => `<span class="${c.pass ? 'acc-ok' : 'rej'}">a = ${c.a}: ${c.pass ? 'passes' : 'witness &mdash; composite'}</span>`).join('')}</div>`;
+    }
+
     function smallFactor(n) {
         for (let k = 2n; k * k <= n && k < 5000n; k++) if (n % k === 0n) return k;
         return null;
@@ -68,7 +110,7 @@
     }
 
     const liveCheck = () => { check(pIn, $('pgPStatus')); check(qIn, $('pgQStatus')); };
-    [pIn, qIn].forEach((el) => el.addEventListener('input', liveCheck));
+    [pIn, qIn].forEach((el) => el.addEventListener('input', () => { genTrace = null; liveCheck(); }));
 
     function extEuclid(phi, e) {
         const rows = [];
@@ -116,9 +158,16 @@
         const tooBig = codes.find((m) => m >= n);
 
         let i = 0;
-        step(i++, 'Choose two secret primes',
-            `<p class="eq">p = <b>${fmt(p)}</b> &nbsp; q = <b>${fmt(q)}</b></p>
-             <p class="why">Both pass Miller–Rabin with bases 2, 3, 5, 7, 11, 13, 17, which is exact for numbers this size. Real keys use primes over 300 digits long.</p>`);
+        if (genTrace) {
+            step(i++, 'Generate two secret primes',
+                `${renderGen(genTrace.p, 'p', p)}${renderGen(genTrace.q, 'q', q)}${renderWitness(p)}
+                 <p class="why">Real keys use primes over 300 digits long; the search is the same, just slower.</p>`);
+        } else {
+            step(i++, 'Choose two secret primes',
+                `<p class="eq">p = <b>${fmt(p)}</b> &nbsp; q = <b>${fmt(q)}</b></p>
+                 ${renderWitness(p)}
+                 <p class="why">Both are confirmed prime the same way my C++ build generates them. Real keys use primes over 300 digits long.</p>`);
+        }
         step(i++, 'Compute the public modulus',
             `<p class="eq">n = p · q = ${fmt(p)} · ${fmt(q)} = <b>${fmt(n)}</b></p>
              <p class="why">Everyone sees n. RSA's security rests on how hard it is to factor n back into p and q.</p>`);
@@ -156,18 +205,14 @@
              <p class="eq">recovered: <b>"${esc(back)}"</b> ${back === msg ? '✓' : '✗'}</p>`, back === msg ? 'ok' : 'err');
     }
 
-    function randomPrime(lo, hi) {
-        let c = BigInt(lo + Math.floor(Math.random() * (hi - lo))) | 1n;
-        while (!millerRabin(c)) c += 2n;
-        return c;
-    }
-
     $('pgRun').addEventListener('click', run);
-    $('pgRandom').addEventListener('click', () => {
-        const p = randomPrime(100, 60000);
-        let q;
-        do { q = randomPrime(100, 60000); } while (q === p);
-        pIn.value = p; qIn.value = q;
+    $('pgGen').addEventListener('click', () => {
+        const tp = generatePrimeTrace(100, 60000);
+        let tq;
+        do { tq = generatePrimeTrace(100, 60000); } while (tq.prime === tp.prime);
+        genTrace = { p: tp, q: tq };
+        pIn.value = tp.prime; qIn.value = tq.prime;
+        liveCheck();
         run();
     });
     [pIn, qIn, msgIn].forEach((el) => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); run(); } }));

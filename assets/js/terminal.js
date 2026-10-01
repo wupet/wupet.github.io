@@ -71,7 +71,7 @@
         ls(args) {
             const dir = (args[0] || '').replace(/\/$/, '');
             if (!dir || dir === '~' || dir === '.') line('about.txt  contact.txt  cv.txt  projects/  experience/  courses/', 'acc');
-            else if (dir === 'projects') line('rsa/  horus/  hack-computer/  battleship-ai/  chess/', 'acc');
+            else if (dir === 'projects') line('rsa/  security/  ml/  horus/  hack-computer/  battleship-ai/  chess/', 'acc');
             else if (dir === 'experience') line('success-lab.md  netvine.md  teaching-assistant.md  tutoring.md', 'acc');
             else if (dir === 'courses') line('22 courses · run `courses` for the summary', 'acc');
             else line(`ls: cannot access '${dir}': No such file or directory`, 'warn');
@@ -101,12 +101,14 @@
         projects() {
             lines([
                 'rsa/            RSA cryptosystem from first principles · C++, GMP · Fall 2025',
+                'security/       camera-system security review, 2 findings · Wireshark, Python · 2025',
+                'ml/             machine learning from scratch · Python, PyTorch · 2025–26',
                 'horus/          LLM recommendation engine, 33-person team · Python, Claude API · 2026',
                 'hack-computer/  a computer from NAND gates up · HDL, Hack Assembly · 2025',
                 'battleship-ai/  density-map targeting AI · Java · 2025',
                 'chess/          team-built chess with move validation · Python · 2024',
             ]);
-            line('try `open rsa` for the interactive playground.', 'dim');
+            line('try `open rsa`, `open security`, or `open ml` for the interactive demos.', 'dim');
         },
         experience() {
             lines([
@@ -148,9 +150,11 @@
         },
         open(args) {
             const what = (args[0] || '').toLowerCase();
-            if (what === 'rsa' && site().openRsa) { line('launching rsa playground…', 'ok'); close(); site().openRsa(); return; }
+            if (what === 'rsa' && site().openRsa) { line('launching rsa demo…', 'ok'); close(); site().openRsa(); return; }
+            if ((what === 'security' || what === 'sec') && site().openSec) { line('launching security demo…', 'ok'); close(); site().openSec(); return; }
+            if (what === 'ml' && site().openMl) { line('launching ml demo…', 'ok'); close(); site().openMl(); return; }
             if (LINKS[what]) { line(`opening ${what}…`, 'ok'); window.open(LINKS[what], '_blank', 'noopener'); return; }
-            line('usage: open github | linkedin | cv | rsa', 'warn');
+            line('usage: open github | linkedin | cv | rsa | security | ml', 'warn');
         },
         cd(args) {
             const target = (args[0] || '~').replace(/^\/|\/$/g, '');
