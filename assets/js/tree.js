@@ -17,17 +17,19 @@
         { id: '308', code: 'MATH 308', name: 'Differential Equations', term: 2, track: 'math' },
         { id: '211', code: 'STAT 211', name: 'Principles of Statistics', term: 2, track: 'math' },
 
+        // Order within each term is tuned top-to-bottom to keep edges from crossing:
+        // core trunk on top, systems in the middle, security along the bottom.
         { id: '221', code: 'CSCE 221', name: 'Data Structures & Algorithms', term: 3, track: 'core', note: 'The trunk of the tree. Most later courses branch from here.' },
-        { id: '312', code: 'CSCE 312', name: 'Computer Organization', term: 3, track: 'systems', note: 'Where I built the Hack computer, from NAND gates up.' },
         { id: '314', code: 'CSCE 314', name: 'Programming Languages', term: 3, track: 'core' },
+        { id: '312', code: 'CSCE 312', name: 'Computer Organization', term: 3, track: 'systems', note: 'Where I built the Hack computer, from NAND gates up.' },
 
-        { id: '313', code: 'CSCE 313', name: 'Intro to Computer Systems', term: 4, track: 'systems', note: 'Processes, threads, IPC and networking in C++.' },
         { id: '331', code: 'CSCE 331', name: 'Foundations of Software Engineering', term: 4, track: 'core' },
         { id: '411', code: 'CSCE 411', name: 'Design & Analysis of Algorithms', term: 4, track: 'core' },
+        { id: '313', code: 'CSCE 313', name: 'Intro to Computer Systems', term: 4, track: 'systems', note: 'Processes, threads, IPC and networking in C++.' },
         { id: '470', code: 'MATH 470', name: 'Communications & Cryptography I', term: 4, track: 'security', note: 'The number theory behind RSA, the same term I implemented it.' },
 
-        { id: '410', code: 'CSCE 410', name: 'Operating Systems', term: 5, track: 'systems' },
         { id: '430', code: 'CSCE 430', name: 'Problem Solving Strategies', term: 5, track: 'core', note: 'Competitive-programming-style algorithmic problem solving.' },
+        { id: '410', code: 'CSCE 410', name: 'Operating Systems', term: 5, track: 'systems' },
         { id: '449', code: 'CSCE 449', name: 'Applied Cryptography', term: 5, track: 'security' },
         { id: '471', code: 'MATH 471', name: 'Communications & Cryptography II', term: 5, track: 'security' },
         { id: '402', code: 'CSCE 402', name: 'Cybersecurity Law & Policy', term: 5, track: 'security', note: 'The legal and policy side of security work.' },

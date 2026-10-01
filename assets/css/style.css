@@ -605,6 +605,9 @@ strong { font-weight: 600; }
     transition: padding 0.5s var(--ease), color 0.3s;
 }
 .archive-title { font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -0.03em; font-weight: 500; transition: transform 0.5s var(--ease), color 0.3s; }
+a.archive-title { color: inherit; text-decoration: none; }
+.archive-desc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+.archive-desc a:hover { color: var(--accent); border-color: var(--accent); }
 .archive-desc { color: var(--ink-2); font-size: 15px; }
 .archive-row > :last-child { text-align: right; }
 .archive-row:hover { padding-left: 20px; padding-right: 20px; }
@@ -915,6 +918,14 @@ strong { font-weight: 600; }
 .encrypted .sec-attacker-glyph { fill: var(--accent); }
 .encrypted .sec-wire-tap { stroke: var(--accent); }
 .sec-copy { opacity: 0; }
+/* replayed reset request + camera-offline flash (finding 2) */
+.sec-reset { opacity: 0; }
+.sec-reset rect { fill: none; stroke: var(--accent-2); stroke-width: 2; stroke-dasharray: 3 3; }
+.sec-reset text { font-family: var(--font-mono); font-size: 11px; fill: var(--accent-2); }
+.sec-down { font-family: var(--font-mono); font-size: 11px; fill: var(--accent-2); opacity: 0; transition: opacity 0.2s; }
+.cam-down .sec-down { opacity: 1; }
+.cam-down .sec-node:first-of-type rect, .cam-down .sec-node:first-of-type path { stroke: var(--accent-2); opacity: 0.4; }
+.cam-down #secWireMain { stroke: var(--accent-2); opacity: 0.35; }
 .sec-toggle { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding: 0 6px; }
 .sec-toggle > .mono { color: var(--ink-3); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; }
 .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; border: 0; background: none; padding: 4px; }

@@ -23,16 +23,16 @@
             fix: 'Carry the media over SRTP and the signaling over RTSPS (RTSP wrapped in TLS), or tunnel everything through a VPN. Then an on-path capture is just noise.',
         },
         cookie: {
-            title: 'Plaintext session cookie (HTTP admin portal)',
-            right: 'admin',
-            glyph: '⌘', // ⌘ -> stands in for a session token
-            verdict: { bad: 'Exposed — the session cookie rides in the clear', ok: 'Protected — the header is encrypted in transit' },
+            title: 'Replayable session token → forced reboot (DoS)',
+            right: 'operator',
+            glyph: '#', // the per-session number
+            verdict: { bad: 'Exposed — the session token is a bearer password in the clear', ok: 'Protected — the token is encrypted and bound to the session' },
             capture: {
-                bad: 'The session cookie, sitting in a plain-HTTP header. Whoever holds that value is treated as the logged-in admin, because the server trusts the cookie, not the person.',
-                ok: 'Only TLS ciphertext. The cookie never appears on the wire, so there is nothing to lift and nothing to replay.',
+                bad: 'At login the system hands back a unique session number, and that number <i>is</i> the password for every request after it. Copy it off the wire and you can act as that logged-in session — no username, no password needed.',
+                ok: 'Only TLS ciphertext. The session number never crosses the wire in the clear, so there is nothing to copy and nothing to replay.',
             },
-            why: 'A borrowed session can drive the admin API. This system exposes a reboot endpoint, so a single leaked cookie can take every camera offline — a denial of service — without ever learning the password.',
-            fix: 'Serve the portal over HTTPS, mark cookies Secure + HttpOnly, keep digest (challenge–response) auth instead of basic, and bind each session tightly. Now there is no readable cookie to begin with.',
+            why: 'Replaying the token against the system’s API triggers a force-reset: the camera reboots, drops offline for about a minute, and the real user is logged out. Do it again on each new login and the system never stays up — a denial of service that never needs the real password.',
+            fix: 'Serve the portal over HTTPS so the token is never exposed, bind each session to more than a bearer number (client fingerprint + short expiry), and require a fresh challenge on state-changing calls like reboot instead of trusting the token alone.',
         },
     };
 
@@ -40,7 +40,7 @@
     let encrypted = false;
 
     const svg = $('secSvg');
-    const packet = $('secPacket'), copy = $('secCopy');
+    const packet = $('secPacket'), copy = $('secCopy'), reset = $('secReset');
 
     function syncText() {
         const f = FINDINGS[finding];
@@ -55,39 +55,86 @@
         $('secPacketGlyph').textContent = glyph;
         $('secCopyGlyph').textContent = glyph;
         svg.classList.toggle('encrypted', encrypted);
+        svg.classList.remove('cam-down'); // clear transient reset state on any change
+        reset.style.opacity = '0';
         $('secSwitchLabel').textContent = encrypted ? 'encrypted' : 'cleartext';
         $('secSwitch').setAttribute('aria-checked', String(encrypted));
+        p = 0;
     }
 
-    // Geometry of the straight wires in the SVG
-    const M = { x0: 86, x1: 354, y: 70 };
-    const T = { x: 220, y0: 70, y1: 196 };
+    // Geometry of the straight wires / nodes in the SVG
+    const M = { x0: 86, x1: 354, y: 70 };          // main wire, camera(left) .. right node
+    const T = { x: 220, y0: 70, y1: 196 };          // tap down to the attacker
+    const A = { x: 220, y: 196 };                    // attacker end of the tap
+    const CAM = { x: 60, y: 66 };                    // camera / system node
+    const lerp = (a, b, t) => a + (b - a) * t;
 
     let p = 0, raf = null;
+
     function placeStatic() {
-        const mid = 0.5;
-        packet.setAttribute('transform', `translate(${M.x0 + (M.x1 - M.x0) * mid},${M.y})`);
-        copy.setAttribute('transform', `translate(${T.x},${T.y1})`);
+        packet.setAttribute('transform', `translate(${(M.x0 + M.x1) / 2},${M.y})`);
+        copy.setAttribute('transform', `translate(${A.x},${A.y})`);
         copy.style.opacity = '1';
+        reset.style.opacity = '0';
     }
-    function frame() {
-        p += 0.0045; if (p > 1) p -= 1;
-        const x = M.x0 + (M.x1 - M.x0) * p;
+
+    // Finding 1: media flows camera -> viewer; attacker copies a packet down the tap
+    function frameStream() {
+        const x = lerp(M.x0, M.x1, p);
         packet.setAttribute('transform', `translate(${x},${M.y})`);
         if (p >= 0.5) {
             const cp = (p - 0.5) / 0.5;
-            copy.setAttribute('transform', `translate(${T.x},${T.y0 + (T.y1 - T.y0) * cp})`);
-            copy.style.opacity = String(0.25 + 0.75 * (1 - Math.abs(cp - 0.5) * 2) + 0.4);
-        } else {
-            copy.style.opacity = '0';
+            copy.setAttribute('transform', `translate(${T.x},${lerp(T.y0, T.y1, cp)})`);
+            copy.style.opacity = String(0.4 + (1 - Math.abs(cp - 0.5) * 2) * 0.6);
+        } else { copy.style.opacity = '0'; }
+        reset.style.opacity = '0';
+    }
+
+    // Finding 2: login token travels operator -> system; attacker copies it, then
+    // replays it as a reset, knocking the camera offline. Encryption blocks the replay.
+    function frameReset() {
+        // phase 1: token operator(right) -> system(left), attacker taps a copy
+        if (p < 0.42) {
+            const t = p / 0.42;
+            packet.setAttribute('transform', `translate(${lerp(M.x1, M.x0, t)},${M.y})`);
+            packet.style.opacity = '1';
+            copy.style.opacity = t > 0.5 ? String((t - 0.5) / 0.5) : '0';
+            copy.setAttribute('transform', `translate(${T.x},${lerp(T.y0, T.y1, Math.max(0, (t - 0.5) / 0.5))})`);
+            reset.style.opacity = '0';
+            svg.classList.remove('cam-down');
+            return;
         }
+        packet.style.opacity = '0';
+        copy.setAttribute('transform', `translate(${A.x},${A.y})`);
+        copy.style.opacity = '1';
+        if (encrypted) {
+            // captured token is ciphertext — the replay never fires, camera stays up
+            reset.style.opacity = '0';
+            svg.classList.remove('cam-down');
+            return;
+        }
+        // phase 2: attacker replays a reset toward the system
+        if (p < 0.64) {
+            const t = (p - 0.42) / 0.22;
+            reset.setAttribute('transform', `translate(${lerp(A.x, CAM.x, t)},${lerp(A.y, CAM.y, t)})`);
+            reset.style.opacity = '1';
+            svg.classList.remove('cam-down');
+        } else { // phase 3: camera reboots, offline for ~a minute
+            reset.style.opacity = '0';
+            svg.classList.add('cam-down');
+        }
+    }
+
+    function frame() {
+        p += 0.0042; if (p > 1) p -= 1;
+        (finding === 'cookie' ? frameReset : frameStream)();
         raf = requestAnimationFrame(frame);
     }
     function startAnim() {
         if (reduced) { placeStatic(); return; }
         if (!raf) raf = requestAnimationFrame(frame);
     }
-    function stopAnim() { if (raf) cancelAnimationFrame(raf), raf = null; }
+    function stopAnim() { if (raf) cancelAnimationFrame(raf), raf = null; svg.classList.remove('cam-down'); }
 
     $('secTabs').addEventListener('click', (e) => {
         const btn = e.target.closest('[data-finding]');
