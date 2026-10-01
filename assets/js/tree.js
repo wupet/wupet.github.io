@@ -6,41 +6,40 @@
 
     // term = index into TERMS. Links describe how material builds, not official prereqs.
     const COURSES = [
+        // Order within each term is chosen to minimise edge crossings (checked by brute force).
         { id: '110', code: 'CSCE 110', name: 'Programming I', term: 0, track: 'core', exam: true, note: 'Credit by exam. I now TA this course.' },
         { id: 'calc', code: 'MATH 151–152', name: 'Calculus I & II', term: 0, track: 'math', exam: true },
 
         { id: '222', code: 'CSCE 222', name: 'Discrete Structures', term: 1, track: 'core', note: 'Proofs, logic and counting, the math side of CS.' },
         { id: '251', code: 'MATH 251', name: 'Multivariable Calculus', term: 1, track: 'math' },
 
-        { id: '120', code: 'CSCE 120', name: 'Program Design & Concepts', term: 2, track: 'core', note: 'C++ fundamentals. I now TA this course too.' },
-        { id: '304', code: 'MATH 304', name: 'Linear Algebra', term: 2, track: 'math' },
-        { id: '308', code: 'MATH 308', name: 'Differential Equations', term: 2, track: 'math' },
         { id: '211', code: 'STAT 211', name: 'Principles of Statistics', term: 2, track: 'math' },
+        { id: '120', code: 'CSCE 120', name: 'Program Design & Concepts', term: 2, track: 'core', note: 'C++ fundamentals. I now TA this course too.' },
+        { id: '308', code: 'MATH 308', name: 'Differential Equations', term: 2, track: 'math' },
+        { id: '304', code: 'MATH 304', name: 'Linear Algebra', term: 2, track: 'math' },
 
-        // Order within each term is tuned top-to-bottom to keep edges from crossing:
-        // core trunk on top, systems in the middle, security along the bottom.
         { id: '221', code: 'CSCE 221', name: 'Data Structures & Algorithms', term: 3, track: 'core', note: 'The trunk of the tree. Most later courses branch from here.' },
-        { id: '314', code: 'CSCE 314', name: 'Programming Languages', term: 3, track: 'core' },
         { id: '312', code: 'CSCE 312', name: 'Computer Organization', term: 3, track: 'systems', note: 'Where I built the Hack computer, from NAND gates up.' },
+        { id: '314', code: 'CSCE 314', name: 'Programming Languages', term: 3, track: 'core' },
 
-        { id: '331', code: 'CSCE 331', name: 'Foundations of Software Engineering', term: 4, track: 'core' },
         { id: '411', code: 'CSCE 411', name: 'Design & Analysis of Algorithms', term: 4, track: 'core' },
+        { id: '331', code: 'CSCE 331', name: 'Foundations of Software Engineering', term: 4, track: 'core' },
         { id: '313', code: 'CSCE 313', name: 'Intro to Computer Systems', term: 4, track: 'systems', note: 'Processes, threads, IPC and networking in C++.' },
         { id: '470', code: 'MATH 470', name: 'Communications & Cryptography I', term: 4, track: 'security', note: 'The number theory behind RSA, the same term I implemented it.' },
 
         { id: '430', code: 'CSCE 430', name: 'Problem Solving Strategies', term: 5, track: 'core', note: 'Competitive-programming-style algorithmic problem solving.' },
+        { id: '402', code: 'CSCE 402', name: 'Cybersecurity Law & Policy', term: 5, track: 'security', note: 'The legal and policy side of security work.' },
         { id: '410', code: 'CSCE 410', name: 'Operating Systems', term: 5, track: 'systems' },
         { id: '449', code: 'CSCE 449', name: 'Applied Cryptography', term: 5, track: 'security' },
         { id: '471', code: 'MATH 471', name: 'Communications & Cryptography II', term: 5, track: 'security' },
-        { id: '402', code: 'CSCE 402', name: 'Cybersecurity Law & Policy', term: 5, track: 'security', note: 'The legal and policy side of security work.' },
 
-        { id: '464', code: 'CSCE 464', name: 'Wireless & Mobile Systems', term: 6, track: 'systems', wip: true },
         { id: '652', code: 'CSCE 652', name: 'Software Reverse Engineering', term: 6, track: 'security', wip: true, grad: true, note: 'A graduate course, taken as an undergrad.' },
+        { id: '464', code: 'CSCE 464', name: 'Wireless & Mobile Systems', term: 6, track: 'systems', wip: true },
     ];
 
     const LINKS = [
         ['110', '120'], ['120', '221'], ['222', '221'],
-        ['221', '312'], ['221', '314'], ['221', '313'], ['312', '313'], ['221', '331'],
+        ['120', '312'], ['120', '314'], ['221', '313'], ['312', '313'], ['221', '331'],
         ['221', '411'], ['222', '411'], ['222', '470'], ['304', '470'],
         ['313', '410'], ['411', '430'], ['470', '449'], ['313', '449'], ['470', '471'],
         ['313', '464'], ['410', '652'], ['312', '652'],
